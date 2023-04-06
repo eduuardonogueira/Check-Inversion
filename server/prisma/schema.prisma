@@ -1,0 +1,35 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Check {
+  // Nome Tipo 
+  // @id = definindo como chave primária
+  // uuid() preenche o id automaticamente
+  id String @id @default(uuid())
+  dados String
+  created_at DateTime 
+
+  // definimos o nome que a tabela vai receber
+  @@map("checks")
+}
+
+model Consult {
+  id String @id @default(uuid())
+  ipTarget String 
+  hostname String 
+  neighbor String
+  port String 
+  remotePort String
+  created_at DateTime
+
+  @@map("queries")
+}
