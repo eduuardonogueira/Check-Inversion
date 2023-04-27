@@ -143,6 +143,7 @@ function consultHost(ip) {
                 }
                 setTimeout(() => {                    
                     // Retorna a consulta
+                    console.table(consulta)
                     resolve(consulta)
                 }, 50);
             },50)
@@ -150,7 +151,6 @@ function consultHost(ip) {
     },1500)
 })
 }
-
 
 module.exports = consultHost;
 
