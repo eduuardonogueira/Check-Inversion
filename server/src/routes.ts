@@ -25,19 +25,6 @@ export async function appRoutes(app: FastifyInstance) {
         const consulta = await chamaFunção()
 
         const today = dayjs().startOf('day').toDate()
-        
-        for (let i = 0; i < consulta.length; i ++){
-            await prisma.consult.create({
-                data: {
-                    ipTarget: consulta[i].ip,
-                    hostname: consulta[i].hostname,
-                    neighbor: consulta[i].neighbor,
-                    port: consulta[i].port,
-                    remotePort: consulta[i].remotePort,
-                    created_at: today
-                }
-            })
-        }
 
         return consulta
     })

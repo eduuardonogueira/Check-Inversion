@@ -142,8 +142,6 @@ function consultHost(ip) {
                     consulta.push(table);
                 }
                 setTimeout(() => {                    
-                    // Retorna a consulta
-                    console.table(consulta)
                     resolve(consulta)
                 }, 50);
             },50)
@@ -151,6 +149,8 @@ function consultHost(ip) {
     },1500)
 })
 }
+
+consultHost('172.16.9.2')
 
 module.exports = consultHost;
 

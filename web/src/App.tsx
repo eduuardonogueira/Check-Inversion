@@ -1,10 +1,10 @@
 import './styles/global.css'
-import Teste from  './components/teste'
+import Teste from  './components/consult'
 
 function App() {
 
   return (
-    <div>
+    <div className='bg-[#121214]'>
       <Teste />
     </div>
   )
