@@ -29,11 +29,22 @@ export async function appRoutes(app: FastifyInstance) {
         return consulta
     })
 
-    app.get('/consult', async (request) => {
+    app.post('/login', async (request) => {
+
+        const createLoginBody = z.object({
+            usuario: z.string(),
+            senha: z.any()
+        })
+
+        const { usuario, senha } = createLoginBody.parse(request.body)
+
+        return (usuario + senha)
 
         await prisma.consult.findMany(
             
         )
+
+        
 
 
 
