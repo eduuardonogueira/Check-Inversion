@@ -4,7 +4,7 @@ interface IButton {
     style?: React.CSSProperties | undefined
 }
 
-function Button({type, text, style}: IButton) {
+export function Button({type, text, style}: IButton) {
     return (  
         <button
             type={type}
@@ -15,5 +15,3 @@ function Button({type, text, style}: IButton) {
         </button>
     );
 }
-
-export default Button;

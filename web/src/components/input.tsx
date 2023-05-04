@@ -7,7 +7,7 @@ interface IInput {
 }
 
 
-function Input({type, name, placeholder, required, style}:IInput) {
+export function Input({type, name, placeholder, required, style}:IInput) {
     return (  
         <input
             type={type}
@@ -20,5 +20,3 @@ function Input({type, name, placeholder, required, style}:IInput) {
 
     );
 }
-
-export default Input;

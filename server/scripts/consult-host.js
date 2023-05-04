@@ -150,7 +150,6 @@ function consultHost(ip) {
 })
 }
 
-consultHost('172.16.9.2')
 
 module.exports = consultHost;
 

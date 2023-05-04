@@ -1,8 +1,7 @@
-import Input from "./input";
-import Button from './button';
-import logo from '../img/logo-poppa.png'
+import logo from '/public/logo-poppa.png'
+import { Input, Button } from '../components'
 
-function Login() {
+export function Login() {
     return ( 
             <section className="flex flex-col w-full m-auto">
                 <h1 className="m-auto"><img src={logo} alt="logo" /></h1>
@@ -35,5 +34,3 @@ function Login() {
             </section>
     );
 }
-
-export default Login;
