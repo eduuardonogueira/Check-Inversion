@@ -1,6 +1,6 @@
 interface IButton {
-    type?: "button" | "submit" | "reset" | undefined,
     text: string
+    type?: "button" | "submit" | "reset" | undefined,
     style?: React.CSSProperties | undefined
 }
 

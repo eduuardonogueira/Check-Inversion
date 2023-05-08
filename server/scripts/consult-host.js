@@ -41,7 +41,7 @@ function consultHost(ip) {
 
     searchHostname()
 
-    var oid = "1.3.6.1.4.1.1916.1.13.2.1";
+    oid = "1.3.6.1.4.1.1916.1.13.2.1";
 
     function doneCb (error) {
         if (error)
@@ -56,17 +56,11 @@ function consultHost(ip) {
                 arq = varbinds[i].oid;
                 const port = arq[30]+arq[31];
 
-                const neighborsfind = varbinds.filter(function(objeto) {
-                    return objeto.oid.startsWith('1.3.6.1.4.1.1916.1.13.2.1.3');
-                })
+                const neighborsfind = varbinds.filter( obj => (obj.objeto.oid.startsWith('1.3.6.1.4.1.1916.1.13.2.1.3')));
 
-                const stackFind = varbinds.filter(function(objeto) {
-                    return objeto.oid.startsWith('1.3.6.1.4.1.1916.1.13.2.1.5');
-                })
+                const stackFind = varbinds.filter( obj => (obj.objeto.oid.startsWith('1.3.6.1.4.1.1916.1.13.2.1.5')));
 
-                const remotePortFind = varbinds.filter(function(objeto) {
-                    return objeto.oid.startsWith('1.3.6.1.4.1.1916.1.13.2.1.6');
-                })
+                const remotePortFind = varbinds.filter( obj => (obj.objeto.oid.startsWith('1.3.6.1.4.1.1916.1.13.2.1.6')));
 
                 neighborsArray.push(neighborsfind);
                 stacksArray.push(stackFind);
