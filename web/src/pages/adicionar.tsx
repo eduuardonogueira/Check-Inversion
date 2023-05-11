@@ -3,7 +3,7 @@ import { Menu } from '../components'
 export function Adicionar() {
     return (
         <>
-            <Menu />
+            <Menu ativo='adicionar'/>
             <main>
                 <form method='post'>
                     

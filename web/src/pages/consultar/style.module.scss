@@ -1,0 +1,19 @@
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2,auto);
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "menu painel"
+                         "menu cont";
+}
+
+.grid nav {
+    grid-area: menu;
+}
+
+.grid header {
+    grid-area: painel;
+}
+
+.grid main {
+    grid-area: cont ;
+}
