@@ -1,5 +1,4 @@
 import { FormEvent, useState } from 'react'
-import style from '../styles/global.css'
 import { api } from '../lib/axios'
 import { Menu, Enlace, Button } from '../components'
 
@@ -34,7 +33,7 @@ export function Consult() {
     
     return (
         <>
-            < Menu />
+            < Menu ativo="servicos"/>
             <main className='h-[calc(100vh-100px)] flex flex-col gap-3'>
                 <form 
                     onSubmit={createConsult} 

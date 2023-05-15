@@ -8,6 +8,10 @@ const prisma = new PrismaClient()
 
 export async function appRoutes(app: FastifyInstance) {
 
+    app.get('/', async (request) => {
+        return "olá mundo"
+    } )
+
     app.post('/consult', async (request) => {
 
         const createIpBody = z.object({
@@ -15,7 +19,6 @@ export async function appRoutes(app: FastifyInstance) {
         })
 
         const { ip } = createIpBody.parse(request.body)
-
 
         async function chamaFunção() {
             const resultado = await consultHost(ip)
@@ -43,11 +46,6 @@ export async function appRoutes(app: FastifyInstance) {
         await prisma.consult.findMany(
             
         )
-
-        
-
-
-
 
     })
 

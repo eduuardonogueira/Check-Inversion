@@ -4,7 +4,9 @@ import style from './style.module.scss'
 
 export function Consultar() {
 
+    function inversao() {
 
+    }
 
     return (
         <>
@@ -18,7 +20,8 @@ export function Consultar() {
                     },{
                         nome: "Tempo de atividade",
                         icone: <WarningCircle size={22}/>
-                    }]}    
+                    }]}
+                    onclick={inversao}
                 />
                 <Painel />
                 <main className='bg-[#1C1C20]'>
