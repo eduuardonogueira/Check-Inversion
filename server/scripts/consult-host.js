@@ -144,6 +144,5 @@ function consultHost(ip) {
 })
 }
 
-
 module.exports = consultHost;
 

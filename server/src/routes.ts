@@ -12,7 +12,7 @@ export async function appRoutes(app: FastifyInstance) {
         return "olá mundo"
     } )
 
-    app.post('/consult', async (request) => {
+    app.post('/consultar', async (request) => {
 
         const createIpBody = z.object({
             ip: z.string()

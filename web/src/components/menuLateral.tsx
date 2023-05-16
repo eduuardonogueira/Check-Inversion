@@ -13,9 +13,13 @@ interface IMenuLateral {
 
 export function MenuLateral({titulo, lista }:IMenuLateral): JSX.Element {
 
-    const [ ativo, setAtivo ] = useState<string[]>(Array(lista.length).fill('transparent'))
+    const [ ativo, setAtivo ] = useState<string[]>(() => {
+        const array = []
+        for(let i = 0; i < lista.length; i++) {i == 0 ? array.push("#044FBF") : array.push("transparent")}
+        return array
+    });
 
-    const click = (index: number): void => {
+    const clickMenu = (index: number): void => {
         var newAtivo = [...ativo]
 
         if (newAtivo[index] == 'transparent'){
@@ -36,7 +40,7 @@ export function MenuLateral({titulo, lista }:IMenuLateral): JSX.Element {
                     <li 
                         key={index} 
                         className='flex items-center justify-start gap-1 p-1 w-full text-white font-bold hover:bg-[#044FBF]'
-                        onClick={ () => click(index)}
+                        onClick={ () => clickMenu(index)}
                         style={{ backgroundColor: ativo[index] } as any}
                     >
                         
