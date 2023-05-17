@@ -1,6 +1,6 @@
 import { FormEvent, useState } from 'react'
 import { api } from '../lib/axios'
-import { Menu, Enlace, Button } from '../components'
+import { Menu, Button } from '../components'
 
 const valor = [
     {
@@ -65,9 +65,7 @@ export function Consult() {
                         <article className='flex w-full flex-wrap justify-center gap-y-6'>
                             {consulta.map((item, index) => (
                                 <>
-                                    <Enlace key={index} name={item.hostname} port={item.port} />
                                     <span className='h-1 bg-green-500 w-[19vw] flex self-center'></span>
-                                    <Enlace key={index} name={item.neighbor} port={item.remotePort} />
                                 </>
                             ))}
                         </article>

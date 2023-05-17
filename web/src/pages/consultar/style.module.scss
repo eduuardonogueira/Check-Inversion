@@ -29,6 +29,16 @@
     margin-bottom: 12px;
 }
 
+.subTitulo {
+    background: #0D0D4D;
+    font-size: 14px;
+    font-weight: bold;
+    color: #E1E1E6;
+    width: 100%;
+    padding: 4px 0px;
+    text-align: center;
+}
+
 .painel {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -37,7 +47,7 @@
                          "informacoes conexoes";
     width: 100%;
     height: 100%;
-    gap: 32px 8px;
+    gap: 24px 8px;
 }
 
 .painel section:nth-child(1) {

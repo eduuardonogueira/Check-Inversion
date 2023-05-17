@@ -1,4 +1,4 @@
-import logo from '/public/logo-poppa.png'
+import logo from '/public/img/logo-poppa.png'
 import { Link } from 'react-router-dom'
 import { Input } from './'
 import { Broadcast, HardDrives, House, PlusSquare } from '@phosphor-icons/react'

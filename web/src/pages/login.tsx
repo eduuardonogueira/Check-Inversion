@@ -1,4 +1,4 @@
-import logo from '/public/logo-poppa.png'
+import logo from '/public/img/logo-poppa.png'
 import { Input, Button } from '../components'
 
 export function Login() {
