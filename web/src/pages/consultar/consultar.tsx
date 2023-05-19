@@ -1,20 +1,30 @@
 import { FormEvent, useState } from 'react'
 import { api } from '../../lib/axios'
-import { Menu, MenuLateral, Painel, Button, Input, Box, Conexoes } from '../../components'
+import { Menu, MenuLateral, Painel, Button, Input, Box, Conexoes, Load } from '../../components'
 import { Swap, WarningCircle } from '@phosphor-icons/react'
 import style from './style.module.scss'
 
+interface IConsulta {
+    hostname: string,
+    ip: string,
+    neighbor: string,
+    port: string,
+    remotePort: string,
+    erro: string | any
+}
+
 export function Consultar() {
-    const valor = [{
+    const consultaType = [{
         hostname: '',
         ip: '',
         neighbor: '',
         port: '',
-        remotePort: ''
+        remotePort: '',
+        erro: ''
     }]
 
     const [ ip, setIp ] = useState<string>('')
-    const [ consulta, setConsulta ] = useState(valor)
+    const [ consulta, setConsulta ] = useState<IConsulta[]>(consultaType)
     const [ recentes, setRecentes ] = useState(Array<string>)
     const [ infoRecentes, setInfoRecentes ] = useState<string>()
     const [ infoConexoes, setInfoConexoes ] = useState<number>(0)
@@ -22,13 +32,17 @@ export function Consultar() {
 
     async function consultarHost(event: FormEvent){
         event.preventDefault()
+        setConsulta(consultaType)
 
-        if(ip.length ==0){
+        if(ip.length ==0)
             return
-        }
 
-        await api.post('consultar', { ip }).then(response => setConsulta(response.data))
+        await api.post('consultar', { ip }).then(response => (
+            typeof(response.data) == 'string' ? setConsulta( consultaAntiga => [...consultaAntiga, consultaAntiga[0].erro = response.data]) : 
+            setConsulta(response.data)))
+        
         setRecentes( recentesAntigos => [ ip, ...recentesAntigos])
+        setInfoRecentes('')
     }
 
     function clickRecente(info: string) {
@@ -70,7 +84,7 @@ export function Consultar() {
                                         type='text'
                                         required
                                         placeholder='Ip Adress'
-                                        onchange={(event) => setIp(event.target.value)}
+                                        onchange={(event) => (setIp(event.target.value), setInfoRecentes(event.target.value), setInformacoes(false))}
                                         value={infoRecentes}
                                     />
                                     <Button 
@@ -84,10 +98,10 @@ export function Consultar() {
                             <aside className='w-[30%] max-h-full rounded bg-[#2a2a2e] p-2'>
                                 <h2 className='text-[#E1E1E6] mb-3'>Recentes: {recentes.length} </h2>
                                  
-                                {consulta[0].hostname == '' ? <span></span> : (
-                                    <ul className='text-white flex flex-col gap-1 h-[calc(194px)] overflow-auto'>
+                                {recentes.length <= 0 ? <span></span> : (
+                                    <ul className='text-white flex flex-col gap-1 h-[194px] overflow-auto'>
                                         {recentes.map((item, index) => (
-                                                <Box key={index} text={item} click={clickRecente}/>
+                                            <Box key={index} text={item} click={clickRecente} />
                                         ))}
                                     </ul>)
                                 }
@@ -95,30 +109,34 @@ export function Consultar() {
                         </div>
                         
                     </section>
-
-                    <section className="flex flex-col h-[calc(100vh-222px)] ">
+                    
+                    {/* Conexões */}
+                    <section className="flex flex-col pb-3 ">
                         <h1 className={style.titulo}>Conexões</h1>
-                        { consulta[0].hostname == '' ? '' : 
-                        <div className='flex justify-between items-center mb-3'>
-                            <h4 className='text-[#E1E1E6] '>Resultados: {consulta.length }</h4> 
-                            <div className='flex justify-between gap-2 text-white'>
-                                <span className='px-4 py-1 bg-[#11346B] rounded'>Fibra</span>
-                                <span className="px-4 py-1 bg-yellow-600 rounded">Metálico</span>
-                                <span className="px-4 py-1 bg-red-700 rounded">Down</span>
-                            </div>
-                        </div>
-                        }
-                        { consulta[0].hostname == '' ? <span className='text-center text-gray-300'>Digite o Ip e consulte para exibir os resultados</span>: (
-                            <ul className='flex flex-col h-max-full overflow-auto w-full gap-1'>
-                                < Conexoes consulta={consulta} click={clickConexoes}/>
-                            </ul>
+                        { ip.length == 0 && consulta[0].hostname == '' ? <span className='text-center text-gray-300'>Digite o Ip e consulte para exibir os resultados</span> : ''}
+                        { consulta[0].erro !== '' && consulta[0].hostname == '' ? < Box text={`ERRO: ${consulta[0].erro}`} classname='bg-red-800 hover:' /> : '' }
+                        { consulta[0].hostname == '' ? '' : (
+                            <>
+                                <div className='flex justify-between items-center mb-3'>
+                                <h4 className='text-[#E1E1E6] '>Resultados: {consulta.length }</h4> 
+                                <div className='flex justify-between gap-2 text-white'>
+                                    <span className='px-4 py-1 bg-[#11346B] rounded'>Fibra</span>
+                                    <span className="px-4 py-1 bg-yellow-600 rounded">Metálico</span>
+                                    <span className="px-4 py-1 bg-red-700 rounded">Down</span>
+                                </div>
+                                </div>
+
+                                <ul className='flex flex-col h-max-full overflow-auto w-full gap-1'>
+                                    < Conexoes consulta={consulta} click={clickConexoes}/>
+                                </ul>
+                            </>
+                            
                         )}
                         
                     </section>
 
                     <section className="">
                         <h1 className={style.titulo}>Informações</h1>
-                        
                             { !informacoes ? '' : (
                                 <>
                                     <article>
@@ -159,8 +177,6 @@ export function Consultar() {
                                     </article>
                                 </>
                             )}
-                        
-                        
                     </section>
                 </main>
             </div>

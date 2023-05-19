@@ -17,20 +17,23 @@ function consultHost(ip) {
     var remotePortsArray = [];
     var arq
 
-
-    function searchHostname() {
+    async function searchHostname() {
         var oid = "1.3.6.1.2.1.1.5";
 
         function doneCb (error) {
-            if (error)
-                console.error (error.toString ());
+            if (error)(
+                console.error(error.toString()),
+                resolve(error.toString())
+            )
         }
 
         function feedCb (varbinds) {
 
             for (var i = 0; i < varbinds.length; i++) {
-                if (snmp.isVarbindError (varbinds[i]))
-                    console.error (snmp.varbindError (varbinds[i]));
+                if (snmp.isVarbindError (varbinds[i]))(
+                    resolve(snmp.varbindError(varbinds[i])),
+                    console.error(snmp.varbindError(varbinds[i]))
+                )
                 else
                     host = varbinds[i].value.toString('utf-8');
             }
@@ -44,14 +47,18 @@ function consultHost(ip) {
     oid = "1.3.6.1.4.1.1916.1.13.2.1";
 
     function doneCb (error) {
-        if (error)
-            console.error (error.toString ());
+        if (error)(
+            resolve(error.toString()),
+            console.error(error.toString())
+        )
     }
 
     function feedCb (varbinds) {
         for (var i = 0; i < varbinds.length; i++) {
-            if (snmp.isVarbindError (varbinds[i]))
-                console.error (snmp.varbindError (varbinds[i]));
+            if (snmp.isVarbindError (varbinds[i]))(
+                resolve(snmp.varbindError (varbinds[i])),
+                console.error(snmp.varbindError(varbinds[i]))  
+            )
             else {
                 arq = varbinds[i].oid;
                 const port = arq[30]+arq[31];
@@ -135,8 +142,8 @@ function consultHost(ip) {
                     table.remotePort = remotePorts[j];
                     consulta.push(table);
                 }
-                setTimeout(() => {                    
-                    resolve(consulta)
+                setTimeout(() => {   
+                    consulta.length == 0 ? '' : resolve(consulta);  
                 }, 50);
             },50)
         }, 50);

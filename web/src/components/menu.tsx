@@ -9,7 +9,7 @@ export function Menu({ativo}:{ativo: string}) {
 
     return (
         <header>
-            <nav className='flex h-[100px] w-screen z-10 bg-[#202024] items-center justify-between px-8 box-border'>
+            <nav className='flex h-[100px] z-10 bg-[#202024] items-center justify-between px-8 box-border'>
                 <h1 className="w-[200px] h"><img src={logo} alt="logo" /></h1>
             
                 <ul className='flex justify-around items-center w-[50%]'>

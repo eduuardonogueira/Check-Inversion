@@ -5,7 +5,11 @@ export default {
     './index.html'
   ],
   theme: {
-    extend: {},
+    extend: {
+      gridTemplateColumns: {
+        'conexao': 'auto, 1fr, auto'
+      },
+    },
   },
   plugins: [],
 }

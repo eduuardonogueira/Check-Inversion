@@ -43,7 +43,6 @@ export function MenuLateral({titulo, lista }:IMenuLateral): JSX.Element {
                         onClick={ () => clickMenu(index)}
                         style={{ backgroundColor: ativo[index] } as any}
                     >
-                        
                         {item.icone}
                         <p className='w-auto'>{item.nome}</p>
                     </li>
