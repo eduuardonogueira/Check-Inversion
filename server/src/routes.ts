@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client"
-import { FastifyInstance } from "fastify"
+import { FastifyInstance, FastifyRequest } from "fastify"
 import { z } from 'zod'
 import consultHost  from "../scripts/consult-host.js"
 import dayjs from "dayjs"
@@ -8,47 +8,79 @@ const prisma = new PrismaClient()
 
 export async function appRoutes(app: FastifyInstance) {
 
-    app.get('/', async (request) => {
-        return "olá mundo"
-    } )
+    app.get('/', async (req, res) => {
+        const hosts = await prisma.host.findMany({
+            include: {
+                neighbors: true
+            }
+        })
 
-    app.post('/consultar', async (request) => {
+        return hosts
+    })
+
+
+
+    app.post('/consultar', async (req) => {
 
         const createIpBody = z.object({
             ip: z.string()
         })
 
-        const { ip } = createIpBody.parse(request.body)
+        const { ip } = createIpBody.parse(req.body)
 
-        async function chamaFunção() {
-            const resultado = await consultHost(ip)
-            return resultado
-        }
-    
-        const consulta = await chamaFunção()
+        const consulta = await chamaFuncao(ip)
 
         const today = dayjs().startOf('day').toDate()
 
         return consulta
     })
 
-    app.post('/login', async (request) => {
-
-        const createLoginBody = z.object({
-            usuario: z.string(),
-            senha: z.any()
+    app.post('/consultar/informacoes', async (req) => {
+        const createIpBody = z.object({
+            name: z.string()
         })
 
-        const { usuario, senha } = createLoginBody.parse(request.body)
+        const { name } = createIpBody.parse(req.body)
 
-        return (usuario + senha)
+        const neighbor = await prisma.neighbor.findFirst({ where: { neighbor: name } })
 
-        await prisma.consult.findMany(
-            
-        )
+        return neighbor
+    })
 
+    app.post('/registrar', async (req) => {
+        const createRegistro = z.object({
+            ip: z.string(),
+        })
+
+        const { ip } = createRegistro.parse(req.body)
+        const neighbors = await chamaFuncao( ip )
+
+        try {
+            await prisma.host.create({
+                data: {
+                    ip: ip,
+                    hostname: neighbors[0].hostname,
+                    neighbors: { 
+                        create: neighbors.map((item: any) => ({
+                            neighbor: item.neighbor,
+                            port: item.port,
+                            remotePort: item.remotePort
+                        }))
+                     }
+                }
+            })
+
+            return 'Host Registrado'
+        } catch(erro) {
+            return `Erro ao registrar Host \n Erro: ${erro} `
+        }
+        
     })
 
 }
 
+async function chamaFuncao(ip: string) {
+    const resultado = await consultHost(ip)
+    return resultado
+}
 

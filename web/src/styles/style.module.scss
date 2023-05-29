@@ -15,7 +15,7 @@
 }
 
 .grid main {
-    grid-area: cont ;
+    grid-area: cont;
 }
 
 .titulo {
@@ -45,21 +45,9 @@
     grid-template-rows: auto 1fr;
     grid-template-areas: "consulta conexoes"
                          "informacoes conexoes";
-    width: 100%;
-    height: calc(100vh - 100px - 3.5rem - 77.44px);
-    gap: 24px 8px;
-}
-
-.painel section:nth-child(1) {
-    grid-area: consulta;
-}
-
-.painel section:nth-child(2) {
-    grid-area: conexoes;
-}
-
-.painel section:nth-child(3) {
-    grid-area: informacoes;
+                         width: 100%;
+                         height: calc(100vh - 100px - 3.5rem - 77.44px);
+                         gap: 24px 8px;
 }
 
 ::-webkit-scrollbar {

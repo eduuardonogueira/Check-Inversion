@@ -10,26 +10,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Check {
-  // Nome Tipo 
-  // @id = definindo como chave primária
-  // uuid() preenche o id automaticamente
-  id String @id @default(uuid())
-  dados String
-  created_at DateTime 
 
-  // definimos o nome que a tabela vai receber
-  @@map("checks")
+model Host {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ip String @unique 
+  hostname String
+  neighbors Neighbor[]
 }
 
-model Consult {
-  id String @id @default(uuid())
-  ipTarget String 
-  hostname String 
+model Neighbor {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   neighbor String
-  port String 
+  port String
   remotePort String
-  created_at DateTime
-
-  @@map("queries")
+  host Host? @relation(fields: [hostId], references: [id])
+  hostId Int
 }
+
