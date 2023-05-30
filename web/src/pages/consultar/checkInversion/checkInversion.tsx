@@ -7,10 +7,22 @@ import global from '../../../styles/style.module.scss'
 interface IConsulta {
     hostname: string,
     ip: string,
-    neighbor: string,
+    neighbor: string ,
     port: string,
     remotePort: string,
     erro: string | any
+}
+
+interface INeighbor {
+    hostname: string,
+    ip: string,
+    neighbor: [{
+      neighbor: string,
+      port: string,
+      remotePort: string,
+      updatedAt: string  
+    }],
+    updatedAt: string
 }
 
 export function CheckInversion() {
@@ -29,11 +41,7 @@ export function CheckInversion() {
     const [ infoRecentes, setInfoRecentes ] = useState<string>()
     const [ infoConexoes, setInfoConexoes ] = useState<number>(0)
     const [ informacoes, setInformacoes ] = useState(false)
-    const [ conexaoBanco, setConexaoBanco ] = useState({
-        neighbor: '',
-        port: '',
-        remotePort: ''
-    })
+    const [ conexaoBanco, setConexaoBanco ] = useState<INeighbor | undefined>()
 
     async function consultarHost(event: FormEvent){
         event.preventDefault()
@@ -61,7 +69,7 @@ export function CheckInversion() {
     
         const name = consulta[info].neighbor
 
-        await api.post('/consultar/informacoes', { name } ).then(response => (setConexaoBanco(response.data)))
+        await api.post('/consultar/informacoes', { name, ip } ).then(response => (setConexaoBanco(response.data), console.log(response.data)))
     }
 
     return (
@@ -79,6 +87,7 @@ export function CheckInversion() {
                                 type='text'
                                 required
                                 placeholder='Ip Adress'
+                                autoComplete="off"
                                 onchange={(event) => (setIp(event.target.value), setInfoRecentes(event.target.value), setInformacoes(false))}
                                 value={infoRecentes}
                             />
@@ -152,24 +161,30 @@ export function CheckInversion() {
                                 </div>
                             </article>
 
-                            <article>
-                                <h2 className={`mt-4 ${global.subTitulo}`}>Banco de Dados</h2>
-                                <Box text="Não disponível" classname='bg-red-900'/>
-                                <ul className='flex justify-between gap-1'>
-                                    <Box classname='w-[50%]' text={conexaoBanco.hostname}/>
-                                    <Box classname='w-[50%]' text={conexaoBanco.neighbor}/>
-                                </ul>
-                                <div className='flex justify-between gap-1 mt-1'>
-                                    <ul className='flex flex-col gap-2 w-[50%] text-gray-100'>
-                                        <li>Ip: {conexaoBanco.ip}</li>
-                                        <li>Porta: {conexaoBanco.port}</li>
+                            {/* {conexaoBanco && (
+                                <article>
+                                    <h2 className={`mt-4 ${global.subTitulo}`}>Banco de Dados</h2>
+                                    <Box text="Não disponível" classname='bg-red-900'/>
+                                    <ul className='flex justify-between gap-1'>
+                                        <Box classname='w-[50%]' text={conexaoBanco.hostname}/>
+                                        
+                                        <Box classname='w-[50%]' text={conexaoBanco.updatedAt}/>
                                     </ul>
-                                    <ul className='flex flex-col gap-2 w-[50%] text-gray-100'>
-                                        <li>Ip: {conexaoBanco.ip}</li>
-                                        <li>Porta: {conexaoBanco.remotePort}</li>
-                                    </ul>
-                                </div>
-                            </article>
+                                    {conexaoBanco.neighbor.map((neighbor, index) => (
+                                        <div className='flex justify-between gap-1 mt-1' key={index}>
+                                            <ul className='flex flex-col gap-2 w-[50%] text-gray-100'>
+                                                <li>Ip: {neighbor.neighbor}</li>
+                                                <li>Porta: {neighbor.port}</li>
+                                            </ul>
+                                            <ul className='flex flex-col gap-2 w-[50%] text-gray-100'>
+                                                <li>Ip: {neighbor.remotePort}</li>
+                                                <li>Porta: {neighbor.updatedAt}</li>
+                                            </ul>
+                                        </div>
+                                    ))}
+                                </article>
+                            )} */}
+                            
                         </>
                     )}
             </section>

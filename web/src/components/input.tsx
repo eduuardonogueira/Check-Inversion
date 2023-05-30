@@ -3,13 +3,14 @@ interface IInput {
     name?: string,
     placeholder?: string,
     required?: boolean 
+    autoComplete?: string | undefined,
     style?: React.CSSProperties | undefined,
     onchange?: React.ChangeEventHandler<HTMLInputElement> | undefined ,
     value?: string
 }
 
 
-export function Input({type, name, placeholder, required, style, onchange, value}:IInput) {
+export function Input({type, name, placeholder, required, style, onchange, value, autoComplete}:IInput) {
     return (  
         <input
             type={type}
@@ -20,6 +21,7 @@ export function Input({type, name, placeholder, required, style, onchange, value
             style={style}
             onChange={onchange}
             value={value}
+            autoComplete={autoComplete}
         />
 
     );

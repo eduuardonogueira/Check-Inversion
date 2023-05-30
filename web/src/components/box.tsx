@@ -1,6 +1,6 @@
 
 interface IBox {
-    text: string,
+    text: string | undefined,
     click?: (dados: string) => void
     classname?: string
 }
@@ -9,7 +9,7 @@ export function Box({text, click, classname}:IBox){
 
     function enviarInformacao() {
         const informacao = text
-        click?.(informacao)
+        informacao ?  click?.(informacao) : click?.('erro')
     }
 
     return(

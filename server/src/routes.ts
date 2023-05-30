@@ -19,7 +19,6 @@ export async function appRoutes(app: FastifyInstance) {
     })
 
 
-
     app.post('/consultar', async (req) => {
 
         const createIpBody = z.object({
@@ -36,15 +35,29 @@ export async function appRoutes(app: FastifyInstance) {
     })
 
     app.post('/consultar/informacoes', async (req) => {
-        const createIpBody = z.object({
-            name: z.string()
+        const createDataBody = z.object({
+            name: z.string(),
+            ip: z.string(),
         })
 
-        const { name } = createIpBody.parse(req.body)
+        const { name, ip } = createDataBody.parse(req.body)
+
+        const host = await prisma.host.findUnique({
+            where: {
+                ip: ip
+            },
+            include: {
+                neighbors: {
+                    where: {
+                        neighbor: name
+                    }
+                }
+            }
+        })
 
         const neighbor = await prisma.neighbor.findFirst({ where: { neighbor: name } })
 
-        return neighbor
+        return host
     })
 
     app.post('/registrar', async (req) => {
