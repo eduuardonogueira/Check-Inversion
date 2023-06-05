@@ -31,7 +31,7 @@ export function Verificar() {
         ))
     }
 
-    async function registrar() {
+    async function registrar() {    
         await api.post('/registrar', { ip } ).then(response => (
             setRegistrado(response.data)
         ))

@@ -1,24 +1,25 @@
 import { useEffect, useState } from "react";
 import { Menu, MenuLateral, Painel } from "../../components";
 import global from '../../styles/style.module.scss'
+import style from './visaoGeral.module.scss'
 import { api } from "../../lib/axios";
+import { Clock, DownloadSimple, Export, HardDrive, Question, Swap } from "@phosphor-icons/react";
 
-type Host = {
+type ConsultaHost = {
     hostname: string,
-    ip: string,
-    neighbors: [{
-        neighbor: string,
-        port: string,
-        remotePort: string
-    }],
+    neighbor: string
+    port: string,
+    remotePort: string,
+    status: string,
+    createdAt: string
 }
 
 export function VisaoGeral() {
 
-    const [ hosts, setHosts] = useState<Host[]>([])
+    const [ consultaHosts, setConsultaHosts ] = useState<ConsultaHost[]>([])
     
     useEffect(()=> {
-        api.get('/').then((response) => {setHosts(response.data)})
+        api.get('/').then((response) => {setConsultaHosts(response.data), console.log(response.data)})
     }, [])
 
     return (
@@ -32,24 +33,54 @@ export function VisaoGeral() {
                 />
                 <Painel />
                 <main>
-                    <ul>
-                        { hosts.map((host, index) => (
-                            <ul key={index} className="text-white flex gap-4 mb-4">
-                                <li>{host.hostname}</li>
-                                <li>{host.ip}</li>
-                                <li>
-                                    {host.neighbors.map((neighbor, index) => (
-                                        <ul key={index} className="flex gap-4">
-                                            <li>{neighbor.neighbor}</li>
-                                            <li>{neighbor.port}</li>
-                                            <li>{neighbor.remotePort}</li>
-                                        </ul>
-                                    ))}
-                                </li>
-                            </ul>
+                    <h2>
+                        <ul className={style.hostColumn}>
+                            <li>
+                                <p>Host</p>
+                                <HardDrive size={22}/>
+                            </li>
+                            <li>
+                                <p>Neighbors</p>
+                                <Swap size={22}/>
+                            </li>
+                            <li>
+                                <p>Port</p>
+                                <Export size={22}/>
+                            </li>
+                            <li>
+                                <p>Remote Port</p>
+                                <DownloadSimple size={22}/>
+                            </li>
+                            <li>
+                                <p>Last Check</p>
+                                <Clock size={22}/>
+                            </li>
+                            <li>
+                                <p>Status</p>
+                                <Question size={22}/>
+                            </li>
+                        </ul>
+                    </h2>
 
+
+                    <article>
+                        { consultaHosts.map((consultaHost, index) => (
+                            <ul key={index} className={`${ consultaHost.status !== 'Ok' && style.hostInvertido } ${style.host}`}>
+                                { consultaHost.hostname === consultaHosts[index].hostname ? (
+                                    <li className={style.hostname}>{consultaHost.hostname}</li>
+                                ): '' }
+                                <ul key={index}>
+                                    <div>
+                                        <li>{consultaHost.neighbor}</li>
+                                        <li>{consultaHost.port}</li>
+                                        <li>{consultaHost.remotePort}</li>
+                                        <li>{consultaHost.createdAt}</li>
+                                        <li>{consultaHost.status}</li>
+                                    </div>
+                                </ul>
+                            </ul>
                         ))}
-                    </ul>
+                    </article>
                 </main>
             </div>  
         </>

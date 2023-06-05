@@ -1,0 +1,68 @@
+.hostColumn {
+    display: flex;
+    gap: 2px;
+    height: 40px;
+    color: #E1E1E6;
+    width: 100%;
+
+    box-sizing: border-box;
+    li {
+        display: flex;
+        align-items: center;
+        width: calc(100% / 6);
+        gap: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        padding: 12px;
+
+    }
+}
+
+.hostInvertido {
+    li {
+        background: #460303 !important
+    }
+}
+
+.host {
+    display: flex;
+    color: #E1E1E6;
+    gap: 2px;
+    margin-bottom: 2px;
+    font-size: 14px;
+    border-radius: 8px;
+
+    li {
+        background: #128400
+    }
+
+    .hostname {
+        display: flex;
+        width: calc(100% / 5);
+        padding: 12px;
+        height: fit-content;
+        border-radius: 4px 0px 0px 4px;
+    }
+
+    ul {
+        width: 100%;
+        div {
+            flex-grow: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            margin-bottom: 2px;
+            
+            li {
+                width: calc(100%/5.05);
+                padding: 12px;
+                box-sizing: border-box;
+            }
+
+            li:last-child {
+                border-radius: 0px 4px 4px 0px;
+            }
+        }
+    }
+
+}

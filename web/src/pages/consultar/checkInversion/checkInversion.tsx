@@ -16,7 +16,7 @@ interface IConsulta {
 interface INeighbor {
     hostname: string,
     ip: string,
-    neighbor: [{
+    neighbors: [{
       neighbor: string,
       port: string,
       remotePort: string,
@@ -69,7 +69,9 @@ export function CheckInversion() {
     
         const name = consulta[info].neighbor
 
-        await api.post('/consultar/informacoes', { name, ip } ).then(response => (setConexaoBanco(response.data), console.log(response.data)))
+        await api.post('/consultar/informacoes', { name, ip } ).then(response => (setConexaoBanco(response.data)))
+
+
     }
 
     return (
@@ -151,39 +153,34 @@ export function CheckInversion() {
                                 </ul>
                                 <div className='flex justify-between gap-1 mt-1'>
                                     <ul className='flex flex-col gap-2 w-[50%] text-gray-100'>
-                                        <li>Ip: {consulta[infoConexoes].ip}</li>
                                         <li>Porta: {consulta[infoConexoes].port}</li>
                                     </ul>
                                     <ul className='flex flex-col gap-2 w-[50%] text-gray-100'>
-                                        <li>Ip: Não disponível</li>
                                         <li>Porta: {consulta[infoConexoes].remotePort}</li>
                                     </ul>
                                 </div>
                             </article>
 
-                            {/* {conexaoBanco && (
+                            {conexaoBanco ? (
                                 <article>
                                     <h2 className={`mt-4 ${global.subTitulo}`}>Banco de Dados</h2>
-                                    <Box text="Não disponível" classname='bg-red-900'/>
                                     <ul className='flex justify-between gap-1'>
                                         <Box classname='w-[50%]' text={conexaoBanco.hostname}/>
                                         
-                                        <Box classname='w-[50%]' text={conexaoBanco.updatedAt}/>
+                                        <Box classname='w-[50%]' text={conexaoBanco.neighbors[0].neighbor}/>
                                     </ul>
-                                    {conexaoBanco.neighbor.map((neighbor, index) => (
+                                    {conexaoBanco.neighbors.map((neighbor, index) => (
                                         <div className='flex justify-between gap-1 mt-1' key={index}>
                                             <ul className='flex flex-col gap-2 w-[50%] text-gray-100'>
-                                                <li>Ip: {neighbor.neighbor}</li>
                                                 <li>Porta: {neighbor.port}</li>
                                             </ul>
                                             <ul className='flex flex-col gap-2 w-[50%] text-gray-100'>
-                                                <li>Ip: {neighbor.remotePort}</li>
-                                                <li>Porta: {neighbor.updatedAt}</li>
+                                                <li>Porta: {neighbor.remotePort}</li>
                                             </ul>
                                         </div>
                                     ))}
                                 </article>
-                            )} */}
+                            ): <Box text="Não disponível" classname='bg-red-900'/> }
                             
                         </>
                     )}

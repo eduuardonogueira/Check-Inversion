@@ -12,22 +12,34 @@ datasource db {
 
 
 model Host {
-  id Int @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id String @id @default(uuid())
   ip String @unique 
   hostname String
   neighbors Neighbor[]
+  HostQueries HostQuery[]
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
 }
 
 model Neighbor {
-  id Int @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id String @id @default(uuid())
   neighbor String
   port String
   remotePort String
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
   host Host? @relation(fields: [hostId], references: [id])
-  hostId Int
+  hostId String
+}
+
+model HostQuery {
+  id String @id @default(uuid())
+  neighbor String
+  port String
+  remotePort String
+  status String
+  createdAt DateTime @default(now())
+  host Host? @relation(fields: [hostId], references: [id])
+  hostId String
 }
 
