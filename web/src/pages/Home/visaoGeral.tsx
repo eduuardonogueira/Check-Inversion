@@ -7,10 +7,14 @@ import { Clock, DownloadSimple, Export, HardDrive, Question, Swap } from "@phosp
 
 type ConsultaHost = {
     hostname: string,
-    neighbor: string
-    port: string,
-    remotePort: string,
-    status: string,
+    ip: string,
+    HostQueries: {
+        neighbor: string,
+        port: string,
+        remotePort: string,
+        status: string,
+        createdAt: string
+    }[],
     createdAt: string
 }
 
@@ -19,7 +23,7 @@ export function VisaoGeral() {
     const [ consultaHosts, setConsultaHosts ] = useState<ConsultaHost[]>([])
     
     useEffect(()=> {
-        api.get('/').then((response) => {setConsultaHosts(response.data), console.log(response.data)})
+        api.get('/').then((response) => {setConsultaHosts(response.data)})
     }, [])
 
     return (
@@ -63,21 +67,28 @@ export function VisaoGeral() {
                     </h2>
 
 
-                    <article>
-                        { consultaHosts.map((consultaHost, index) => (
-                            <ul key={index} className={`${ consultaHost.status !== 'Ok' && style.hostInvertido } ${style.host}`}>
-                                { consultaHost.hostname === consultaHosts[index].hostname ? (
-                                    <li className={style.hostname}>{consultaHost.hostname}</li>
-                                ): '' }
-                                <ul key={index}>
-                                    <div>
-                                        <li>{consultaHost.neighbor}</li>
-                                        <li>{consultaHost.port}</li>
-                                        <li>{consultaHost.remotePort}</li>
-                                        <li>{consultaHost.createdAt}</li>
-                                        <li>{consultaHost.status}</li>
-                                    </div>
-                                </ul>
+                    <article className={`overflow-auto h-[calc(100vh-297px)]`}>
+                        { consultaHosts.map((host, index) => (
+                            <ul key={index} className={style.host}>
+                                <li className={`${style.hostname} ${host.HostQueries.find((vizinho) => vizinho.status === 'Invertido') ? style.hostInvertido : '' }`} >
+                                    {host.hostname}
+                                </li>
+                                <li>
+                                { 
+                                    host.HostQueries.map((query, index) => (
+                                        <ul key={index}>
+                                            <div className={`${style.enlace} ${ query.status == "Invertido" ? style.invertido : '' }`}>
+                                                <li>{query.neighbor}</li>
+                                                <li>{query.port}</li>
+                                                <li>{query.remotePort}</li>
+                                                <li>{query.createdAt}</li>
+                                                <li>{query.status}</li>
+                                            </div>
+                                        </ul>
+                                    ))
+                                }
+                                </li>
+                                
                             </ul>
                         ))}
                     </article>

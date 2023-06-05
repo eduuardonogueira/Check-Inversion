@@ -5,10 +5,6 @@ import consultHost  from '../scripts/consult-host.js'
 import dayjs from 'dayjs';
 
 const prisma = new PrismaClient()
-const horaAtual = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
-const ultimosCincoMinutos = dayjs().subtract(5, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
-
-
 
 export async function appRoutes(app: FastifyInstance) {
     async function monitorar(){
@@ -33,27 +29,48 @@ export async function appRoutes(app: FastifyInstance) {
             return 'Ok'
         }
 
-        dados.map( async host => {
-            for (var i = 0; i < host.neighbors.length ; i++ ) {
-                console.log(host.ip)
-                const hostQueries: Consulta[] = await consultHost(host.ip)
+        var contador = 0
 
-                console.log(hostQueries)
-                await prisma.hostQuery.create({
-                    data: {
-                        host: {connect: {id: host.id}},
-                        neighbor: hostQueries[i].neighbor,
-                        port: hostQueries[i].port,
-                        remotePort: hostQueries[i].remotePort,
-                        status: vef(host.neighbors[i], hostQueries[i]) == 'Invertido' ? 'Invertido' : 'Ok',
-                        createdAt: horaAtual
-                    }
-                })
+        async function query() {
+            const horaAtual = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+            console.log(contador)
+            const hostQuery: Consulta[] = await consultHost(dados[contador].ip)
+            console.log(dados[contador].hostname)
             
-                console.log('invertido')
+            var vizinhos = 0 
+            function registrar() {
+                if ( vizinhos < hostQuery.length ) {
+                    setTimeout( async () => {
+                        await prisma.hostQuery.create({
+                            data: {
+                                host: { connect: { id: dados[contador].id } },
+                                neighbor: hostQuery[vizinhos].neighbor,
+                                port: hostQuery[vizinhos].port,
+                                remotePort: hostQuery[vizinhos].remotePort,
+                                status: vef(dados[contador].neighbors[vizinhos], hostQuery[vizinhos]) == 'Invertido' ? 'Invertido' : 'Ok' ,
+                                createdAt: horaAtual
+                            }
+                        })
+
+                        console.log('registrado: ' + hostQuery[vizinhos].neighbor + " | horário: " + horaAtual )
+                        vizinhos ++
+                        setImmediate(registrar)
+                    }, 500 )
+                }
             }
+
+            registrar()
             
-        })
+            setTimeout(() => {
+                if ( contador < dados.length - 1) {
+                    console.log('Consultando próximo')
+                    contador ++
+                    setImmediate(query)
+                }
+            }, 5000)
+        }
+            
+        query()
 
         setTimeout(monitorar, 5 * 60 * 1000)
     }
@@ -61,10 +78,11 @@ export async function appRoutes(app: FastifyInstance) {
     monitorar()
 
     app.get('/', async (req, res) => {
+        const horaAtual = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+        const ultimosCincoMinutos = dayjs().subtract(5, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
 
-        const dados = await prisma.host.findMany({
+        const todos = await prisma.host.findMany({
             include: {
-                neighbors: true,
                 HostQueries: {
                     where: {
                         createdAt: {
@@ -79,7 +97,7 @@ export async function appRoutes(app: FastifyInstance) {
             }
         })
 
-
+        return todos
 
     });
 
@@ -121,6 +139,8 @@ export async function appRoutes(app: FastifyInstance) {
     })
 
     app.post('/registrar', async (req) => {
+        const horaAtual = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+
         const createRegistro = z.object({
             ip: z.string(),
         })

@@ -1,15 +1,16 @@
 .hostColumn {
-    display: flex;
+    display: grid;
+    grid-template-columns: calc(100%/6) 1fr auto 0.8fr 1fr 1fr;
     gap: 2px;
     height: 40px;
     color: #E1E1E6;
     width: 100%;
-
     box-sizing: border-box;
+
     li {
+        min-width: 8vw;
         display: flex;
         align-items: center;
-        width: calc(100% / 6);
         gap: 8px;
         font-size: 16px;
         font-weight: bold;
@@ -19,50 +20,49 @@
 }
 
 .hostInvertido {
+    background: #460303 !important ;
+}
+
+.invertido {
     li {
         background: #460303 !important
     }
 }
 
 .host {
-    display: flex;
+    display: grid;
+    width: 100%;
+    grid-template-columns: calc(100%/6) 1fr;
+    grid-template-areas: "hostname enlace";
+    grid-template-rows: auto;
     color: #E1E1E6;
     gap: 2px;
     margin-bottom: 2px;
     font-size: 14px;
     border-radius: 8px;
+}
 
-    li {
-        background: #128400
-    }
+.hostname {
+    display: flex;
+    grid-area: hostname ;
+    align-items: center;
+    padding: 12px;
+    background: #128400;
+    height: fit-content;
+    border-radius: 4px 0px 0px 4px;
+}
 
-    .hostname {
+.enlace {
+    display: grid;
+    grid-template-columns: 1fr auto 0.8fr 1fr 1fr;
+    gap: 2px;
+
+    > li {
+        min-width: 8vw;
         display: flex;
-        width: calc(100% / 5);
+        align-items: center;
         padding: 12px;
-        height: fit-content;
-        border-radius: 4px 0px 0px 4px;
+        margin-bottom: 2px;
+        background-color: #128400;
     }
-
-    ul {
-        width: 100%;
-        div {
-            flex-grow: 1;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2px;
-            margin-bottom: 2px;
-            
-            li {
-                width: calc(100%/5.05);
-                padding: 12px;
-                box-sizing: border-box;
-            }
-
-            li:last-child {
-                border-radius: 0px 4px 4px 0px;
-            }
-        }
-    }
-
 }
