@@ -32,8 +32,6 @@ export function MenuLateral({titulo, lista, alterarLista }:IMenuLateral): JSX.El
         if (newAtivo[index] == 'transparent'){
             newAtivo.fill('transparent')
             newAtivo[index] = '#044FBF'
-        }else{
-            newAtivo[index] = 'transparent'
         }
         
         setAtivo(newAtivo)
