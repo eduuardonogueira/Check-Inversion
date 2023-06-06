@@ -1,30 +1,35 @@
-import { useEffect, useState } from "react";
 import { Menu, MenuLateral, Painel } from "../../components";
 import global from '../../styles/style.module.scss'
-import style from './visaoGeral.module.scss'
+import { useEffect, useState } from "react";
 import { api } from "../../lib/axios";
-import { Clock, DownloadSimple, Export, HardDrive, Question, Swap } from "@phosphor-icons/react";
-
-type ConsultaHost = {
-    hostname: string,
-    ip: string,
-    HostQueries: {
-        neighbor: string,
-        port: string,
-        remotePort: string,
-        status: string,
-        createdAt: string
-    }[],
-    createdAt: string
-}
+import style from './visaoGeral.module.scss'
+import { Clock, DownloadSimple, Export, HardDrive, Question, Swap, CheckCircle, User, WarningCircle } from '@phosphor-icons/react'
 
 export function VisaoGeral() {
+    type ConsultaHost = {
+        hostname: string,
+        ip: string,
+        HostQueries: {
+            neighbor: string,
+            port: string,
+            remotePort: string,
+            status: string,
+            createdAt: string
+        }[],
+        createdAt: string
+    }
 
     const [ consultaHosts, setConsultaHosts ] = useState<ConsultaHost[]>([])
-    
+    const [ solicitacao, setsolicitacao ] = useState('/todos')
+
+    function alterarLista(get: string) {
+        setsolicitacao(get)
+    }
+
+
     useEffect(()=> {
-        api.get('/').then((response) => {setConsultaHosts(response.data)})
-    }, [])
+        api.get(solicitacao).then((response) => {setConsultaHosts(response.data)})
+    }, [solicitacao])
 
     return (
         <>
@@ -32,8 +37,20 @@ export function VisaoGeral() {
             <div className={`mx-8 mt-14 w-vw ${global.grid}`}>
                 <MenuLateral 
                     titulo='Menu'
-                    lista={[
-                    ]}
+                    lista={[{
+                        nome: 'Todos',
+                        icone: <User size={22} />,
+                        get: '/todos'
+                    }, {
+                        nome: 'Invertidos',
+                        icone: <WarningCircle size={22} />,
+                        get: '/invertidos'
+                    }, {
+                        nome: 'Check-Ok',
+                        icone: <CheckCircle size={22} />,
+                        get: '/check-ok'
+                    }]}
+                    alterarLista={alterarLista}
                 />
                 <Painel />
                 <main>
@@ -65,8 +82,6 @@ export function VisaoGeral() {
                             </li>
                         </ul>
                     </h2>
-
-
                     <article className={`overflow-auto h-[calc(100vh-297px)]`}>
                         { consultaHosts.map((host, index) => (
                             <ul key={index} className={style.host}>

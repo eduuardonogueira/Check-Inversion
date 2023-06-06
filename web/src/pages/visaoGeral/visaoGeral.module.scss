@@ -20,12 +20,15 @@
 }
 
 .hostInvertido {
-    background: #460303 !important ;
+    background: #2C0808 !important ;
+    border-block: 1px solid #793737 !important; 
+    border-left: 3px solid #FC7273 !important;
 }
 
 .invertido {
     li {
-        background: #460303 !important
+        border-block: 1px solid #793737 !important;
+        background: #2C0808 !important;
     }
 }
 
@@ -47,7 +50,9 @@
     grid-area: hostname ;
     align-items: center;
     padding: 12px;
-    background: #128400;
+    background: #001C01;
+    border-left: 3px solid #00FF00;
+    border-block: 1px solid #004A00;
     height: fit-content;
     border-radius: 4px 0px 0px 4px;
 }
@@ -63,6 +68,7 @@
         align-items: center;
         padding: 12px;
         margin-bottom: 2px;
-        background-color: #128400;
+        background-color: #001C01;
+        border-block: 1px solid #004A00;
     }
 }

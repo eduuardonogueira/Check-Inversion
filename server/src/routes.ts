@@ -1,20 +1,13 @@
 import { PrismaClient } from '@prisma/client'
 import { FastifyInstance } from 'fastify'
-import { z } from 'zod'
+import { date, z } from 'zod'
 import consultHost  from '../scripts/consult-host.js'
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 
 const prisma = new PrismaClient()
 
 export async function appRoutes(app: FastifyInstance) {
     async function monitorar(){
-
-        const dados = await prisma.host.findMany({
-            include: {
-                neighbors: true,
-            }
-        })
-
         function vef( value1:vefConsulta, value2: Consulta){
             if (value1.neighbor !== value2.neighbor) {
                 return 'Invertido'
@@ -29,10 +22,16 @@ export async function appRoutes(app: FastifyInstance) {
             return 'Ok'
         }
 
+        const dados = await prisma.host.findMany({
+            include: {
+                neighbors: true,
+            }
+        })
+
         var contador = 0
 
         async function query() {
-            const horaAtual = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+            const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
             console.log(contador)
             const hostQuery: Consulta[] = await consultHost(dados[contador].ip)
             console.log(dados[contador].hostname)
@@ -48,11 +47,11 @@ export async function appRoutes(app: FastifyInstance) {
                                 port: hostQuery[vizinhos].port,
                                 remotePort: hostQuery[vizinhos].remotePort,
                                 status: vef(dados[contador].neighbors[vizinhos], hostQuery[vizinhos]) == 'Invertido' ? 'Invertido' : 'Ok' ,
-                                createdAt: horaAtual
+                                createdAt: hour
                             }
                         })
 
-                        console.log('registrado: ' + hostQuery[vizinhos].neighbor + " | horário: " + horaAtual )
+                        console.log('registrado: ' + hostQuery[vizinhos].neighbor + " | horário: " + hour )
                         vizinhos ++
                         setImmediate(registrar)
                     }, 500 )
@@ -74,20 +73,51 @@ export async function appRoutes(app: FastifyInstance) {
 
         setTimeout(monitorar, 5 * 60 * 1000)
     }
-
     monitorar()
 
-    app.get('/', async (req, res) => {
-        const horaAtual = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
-        const ultimosCincoMinutos = dayjs().subtract(5, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+
+    /* Rotas */
+
+    /* Visão Geral */
+
+    type bc = {
+        hostname: string,
+        HostQueries: {
+            neighbor: string,
+            port: string,
+            remotePort: string,
+            status: string,
+            createdAt: Date, 
+            id: string,
+            hostId: string
+        }[],
+    }
+
+    function vefConsulta( value : bc[]) {
+        value.map( host => (host.HostQueries.length == 0) ? host.HostQueries = ([{
+            neighbor: 'consultando',
+            port: 'consultando',
+            remotePort: 'consultando',
+            status: 'consultando',
+            createdAt: dayjs().toDate(), 
+            id: '',
+            hostId: ''
+        }]): '' ) 
+
+        return value
+    }
+
+    app.get('/todos', async (req, res) => {
+        const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+        const lastFive = dayjs().subtract(5, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
 
         const todos = await prisma.host.findMany({
             include: {
                 HostQueries: {
                     where: {
                         createdAt: {
-                            gte: ultimosCincoMinutos,
-                            lte: horaAtual
+                            gte: lastFive,
+                            lte: hour
                         }
                     },
                     orderBy: {
@@ -97,10 +127,66 @@ export async function appRoutes(app: FastifyInstance) {
             }
         })
 
+        vefConsulta(todos)
+        
         return todos
-
     });
 
+    app.get('/invertidos', async (req, res) => {
+        const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+        const lastFive = dayjs().subtract(5, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+
+        const invertidos = await prisma.host.findMany({
+            select: {
+                hostname: true,
+                HostQueries: {
+                    where: {
+                        status: 'Invertido',
+                        createdAt: {
+                            gte: lastFive,
+                            lte: hour
+                        },
+                    },
+                    orderBy: {
+                        createdAt: 'asc'
+                    }
+                }
+            }
+        })
+
+        console.log(invertidos)
+        return invertidos
+    })
+
+    app.get('/check-ok', async (req, res) => {
+        const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+        const lastFive = dayjs().subtract(5, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+
+        const checkOk = await prisma.host.findMany({
+            include: {
+                HostQueries: {
+                    where: {
+                        status: 'Ok',
+                        createdAt: {
+                            gte: lastFive,
+                            lte: hour
+                        }
+                    },
+                    orderBy: {
+                        createdAt: 'asc'
+                    }
+                }
+            }
+        })
+
+        vefConsulta(checkOk)
+
+        return checkOk
+
+    })
+
+
+    /* Consulta */
     app.post('/consultar', async (req) => {
 
         const createIpBody = z.object({
@@ -138,6 +224,8 @@ export async function appRoutes(app: FastifyInstance) {
         return host
     })
 
+
+    /* Adicionar */
     app.post('/registrar', async (req) => {
         const horaAtual = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
 
@@ -182,6 +270,10 @@ export async function appRoutes(app: FastifyInstance) {
         }
         
     })
+
+
+
+
 
     type Consulta = {
         hostname: string,

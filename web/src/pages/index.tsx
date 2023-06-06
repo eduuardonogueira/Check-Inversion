@@ -1,5 +1,5 @@
 export * from './login';
-export * from './Home/visaoGeral';
+export * from './visaoGeral/visaoGeral';
 
 export * from './consultar/consultar';
 export * from './consultar/checkInversion/checkInversion'

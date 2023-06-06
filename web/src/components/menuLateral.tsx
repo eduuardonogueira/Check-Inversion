@@ -2,16 +2,23 @@ import { useState } from "react"
 
 interface Objeto {
     nome: string,
-    icone: JSX.Element
+    icone: JSX.Element,
+    get: string
 }
 
 interface IMenuLateral {
     titulo: string,
     lista: Objeto[],
+    alterarLista: (get: string) => void
 }
 
 
-export function MenuLateral({titulo, lista }:IMenuLateral): JSX.Element {
+export function MenuLateral({titulo, lista, alterarLista }:IMenuLateral): JSX.Element {
+
+    function setarLista(lista: string) {
+        alterarLista(lista)
+    }
+
 
     const [ ativo, setAtivo ] = useState<string[]>(() => {
         const array = []
@@ -39,8 +46,8 @@ export function MenuLateral({titulo, lista }:IMenuLateral): JSX.Element {
                 {lista.map((item, index ) => (
                     <li 
                         key={index} 
-                        className='flex items-center justify-start gap-1 p-1 w-full text-white font-bold hover:bg-[#044FBF]'
-                        onClick={ () => clickMenu(index)}
+                        className='flex items-center justify-start gap-1 p-1 w-full text-white font-bold hover:bg-[#044FBF] hover:cursor-pointer'
+                        onClick={ () => (clickMenu(index), setarLista(item.get))}
                         style={{ backgroundColor: ativo[index] } as any}
                     >
                         {item.icone}
