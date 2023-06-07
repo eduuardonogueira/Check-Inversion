@@ -29,7 +29,7 @@ export function VisaoGeral() {
 
     useEffect(()=> {
         api.get(solicitacao).then((response) => {setConsultaHosts(response.data)})
-    }, [solicitacao])
+    }, [solicitacao, consultaHosts])
 
     return (
         <>
@@ -85,9 +85,12 @@ export function VisaoGeral() {
                     <article className={`overflow-auto h-[calc(100vh-297px)]`}>
                         { consultaHosts.map((host, index) => (
                             <ul key={index} className={style.host}>
-                                <li className={`${style.hostname} ${host.HostQueries.find((vizinho) => vizinho.status === 'Invertido') ? style.hostInvertido : '' }`} >
-                                    {host.hostname}
-                                </li>
+
+                                { host.HostQueries.length == 0 ? '' : 
+                                    <li className={`${style.hostname} ${host.HostQueries.find((vizinho) => vizinho.status === 'Invertido') ? style.hostInvertido : '' }`} >
+                                        { host.hostname}
+                                    </li>
+                                }
                                 <li>
                                 { 
                                     host.HostQueries.map((query, index) => (

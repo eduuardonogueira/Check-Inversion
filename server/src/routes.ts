@@ -7,6 +7,7 @@ import dayjs, { Dayjs } from 'dayjs';
 const prisma = new PrismaClient()
 
 export async function appRoutes(app: FastifyInstance) {
+    const hour = dayjs().toDate()
     async function monitorar(){
         function vef( value1:vefConsulta, value2: Consulta){
             if (value1.neighbor !== value2.neighbor) {
@@ -99,7 +100,7 @@ export async function appRoutes(app: FastifyInstance) {
             port: 'consultando',
             remotePort: 'consultando',
             status: 'consultando',
-            createdAt: dayjs().toDate(), 
+            createdAt: hour, 
             id: '',
             hostId: ''
         }]): '' ) 
@@ -154,7 +155,6 @@ export async function appRoutes(app: FastifyInstance) {
             }
         })
 
-        console.log(invertidos)
         return invertidos
     })
 
