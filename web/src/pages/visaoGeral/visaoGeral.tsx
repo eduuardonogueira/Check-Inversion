@@ -1,9 +1,12 @@
 import { Menu, MenuLateral, Painel } from "../../components";
-import global from '../../styles/style.module.scss'
+import global from '../../styles/style.module.scss';
 import { useEffect, useState } from "react";
 import { api } from "../../lib/axios";
-import style from './visaoGeral.module.scss'
-import { Clock, DownloadSimple, Export, HardDrive, Question, Swap, CheckCircle, User, WarningCircle } from '@phosphor-icons/react'
+import style from './visaoGeral.module.scss';
+import { Clock, DownloadSimple, Export, HardDrive, Question, Swap, CheckCircle, User, WarningCircle } from '@phosphor-icons/react';
+import moment from 'moment';
+
+moment.locale('pt-br')
 
 export function VisaoGeral() {
     type ConsultaHost = {
@@ -26,6 +29,7 @@ export function VisaoGeral() {
         setsolicitacao(get)
     }
 
+    const formatarData = (data:string) => moment.utc(data).utcOffset(0).format('HH:mm:ss DD-MM-YYYY');
 
     useEffect(()=> {
         api.get(solicitacao).then((response) => {setConsultaHosts(response.data)})
@@ -99,7 +103,7 @@ export function VisaoGeral() {
                                                 <li>{query.neighbor}</li>
                                                 <li>{query.port}</li>
                                                 <li>{query.remotePort}</li>
-                                                <li>{query.createdAt}</li>
+                                                <li>{formatarData(query.createdAt)}</li>
                                                 <li>{query.status}</li>
                                             </div>
                                         </ul>
