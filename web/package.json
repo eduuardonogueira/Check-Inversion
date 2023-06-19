@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "vite --host",
-    "dev": "vite --host 200.129.132.211",
+    "start": "vite --host 200.129.132.211",
+    "dev": "vite --host ",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
