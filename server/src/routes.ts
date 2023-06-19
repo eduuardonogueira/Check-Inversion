@@ -33,9 +33,7 @@ export async function appRoutes(app: FastifyInstance) {
 
         async function query() {
             const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
-            console.log(contador)
             const hostQuery: Consulta[] = await consultHost(dados[contador].ip)
-            console.log(dados[contador].hostname)
             
             var vizinhos = 0 
             function registrar() {
@@ -52,7 +50,6 @@ export async function appRoutes(app: FastifyInstance) {
                             }
                         })
 
-                        console.log('registrado: ' + hostQuery[vizinhos].neighbor + " | horário: " + hour )
                         vizinhos ++
                         setImmediate(registrar)
                     }, 500 )
@@ -107,6 +104,10 @@ export async function appRoutes(app: FastifyInstance) {
 
         return value
     }
+
+    app.get('./', async (req, res) => {
+        return 'teste de carregamento'
+    })
 
     app.get('/todos', async (req, res) => {
         const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
