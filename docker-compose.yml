@@ -5,9 +5,10 @@ services:
       context: ./server
     ports: 
       - 3333:3333
+    environment:
+      - DATABASE_URL="file:/app/server/prisma/dev.db"
     command:
-      export DATABASE_URL="file:/app/server/prisma/dev.db"
-      npm run start
+      (npm run start&)
     depends_on:
       - react-server
   
@@ -17,4 +18,4 @@ services:
     ports:
       - 5173:5173
     command:
-      npm run start
+      (npm run start&)

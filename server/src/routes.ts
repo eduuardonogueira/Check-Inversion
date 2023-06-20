@@ -112,49 +112,67 @@ export async function appRoutes(app: FastifyInstance) {
     app.get('/todos', async (req, res) => {
         const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
         const LastThirty = dayjs().subtract(30, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+        const hosts = await prisma.host.findMany()
+        const todos = []
 
-        const todos = await prisma.host.findMany({
-            include: {
-                HostQueries: {
-                    where: {
-                        createdAt: {
-                            gte: LastThirty,
-                            lte: hour
-                        }
-                    },
-                    orderBy: {
-                        createdAt: 'asc'
-                    }
+        for(const host of hosts) {
+            const neighborsCount = await prisma.neighbor.count({
+                where: {
+                    hostId: host.id
                 }
-            }
-        })
+            })
 
-        vefConsulta(todos)
-        
+            const HostQueries = await prisma.hostQuery.findMany({
+                where: {
+                    hostId: host.id,
+                    createdAt: {
+                        gte: LastThirty,
+                        lte: hour
+                    },
+                },
+                orderBy: {
+                    createdAt: 'desc'
+                },
+                take: neighborsCount
+            })
+
+            todos.push({hostname: host.hostname, HostQueries: HostQueries})
+            vefConsulta(todos)
+        }
+
         return todos
     });
 
     app.get('/invertidos', async (req, res) => {
         const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
         const LastThirty = dayjs().subtract(30, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+        const hosts = await prisma.host.findMany()
+        const invertidos = []
 
-        const invertidos = await prisma.host.findMany({
-            select: {
-                hostname: true,
-                HostQueries: {
-                    where: {
-                        status: 'Invertido',
-                        createdAt: {
-                            gte: LastThirty,
-                            lte: hour
-                        },
-                    },
-                    orderBy: {
-                        createdAt: 'asc'
-                    }
+        for(const host of hosts) {
+            const neighborsCount = await prisma.neighbor.count({
+                where: {
+                    hostId: host.id
                 }
-            }
-        })
+            })
+
+            const HostQueries = await prisma.hostQuery.findMany({
+                where: {
+                    hostId: host.id,
+                    status: 'Invertido',
+                    createdAt: {
+                        gte: LastThirty,
+                        lte: hour
+                    },
+                },
+                orderBy: {
+                    createdAt: 'desc'
+                },
+                take: neighborsCount
+            })
+
+            HostQueries.length == 0 ? '' : invertidos.push({hostname: host.hostname, HostQueries: HostQueries})
+        }
 
         return invertidos
     })
@@ -162,28 +180,36 @@ export async function appRoutes(app: FastifyInstance) {
     app.get('/check-ok', async (req, res) => {
         const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
         const LastThirty = dayjs().subtract(30, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+        const hosts = await prisma.host.findMany()
+        const checkOk = []
 
-        const checkOk = await prisma.host.findMany({
-            include: {
-                HostQueries: {
-                    where: {
-                        status: 'Ok',
-                        createdAt: {
-                            gte: LastThirty,
-                            lte: hour
-                        }
-                    },
-                    orderBy: {
-                        createdAt: 'asc'
-                    }
+        for(const host of hosts) {
+            const neighborsCount = await prisma.neighbor.count({
+                where: {
+                    hostId: host.id
                 }
-            }
-        })
+            })
 
-        vefConsulta(checkOk)
+            const HostQueries = await prisma.hostQuery.findMany({
+                where: {
+                    hostId: host.id,
+                    status: 'Ok',
+                    createdAt: {
+                        gte: LastThirty,
+                        lte: hour
+                    },
+                },
+                orderBy: {
+                    createdAt: 'desc'
+                },
+                take: neighborsCount
+            })
+
+            checkOk.push({hostname: host.hostname, HostQueries: HostQueries})
+            vefConsulta(checkOk)
+        }
 
         return checkOk
-
     })
 
 

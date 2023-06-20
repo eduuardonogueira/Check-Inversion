@@ -113,6 +113,7 @@ export function VisaoGeral() {
                                 
                             </ul>
                         ))}
+                        { consultaHosts.length == 0 ?  <span className={style.aviso}>Nenhuma inversão na rede</span> : <span>{consultaHosts.length}</span>}
                     </article>
                 </main>
             </div>  
