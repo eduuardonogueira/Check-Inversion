@@ -1,12 +1,13 @@
 import { PrismaClient } from '@prisma/client'
 import { FastifyInstance } from 'fastify'
-import { date, z } from 'zod'
+import { z } from 'zod'
 import consultHost  from '../scripts/consult-host.js'
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 
 const prisma = new PrismaClient()
 
 export async function appRoutes(app: FastifyInstance) {
+    
     const hour = dayjs().subtract(3, 'hour').toDate()
     async function monitorar(){
         function vef( value1:vefConsulta, value2: Consulta){
@@ -60,16 +61,15 @@ export async function appRoutes(app: FastifyInstance) {
             
             setTimeout(() => {
                 if ( contador < dados.length - 1) {
-                    console.log('Consultando próximo')
                     contador ++
                     setImmediate(query)
                 }
-            }, 5000)
+            }, 10000)
         }
             
         query()
 
-        setTimeout(monitorar, 20 * 60 * 1000)
+        setTimeout(monitorar, 30 * 60 * 1000)
     }
     monitorar()
 
@@ -105,20 +105,20 @@ export async function appRoutes(app: FastifyInstance) {
         return value
     }
 
-    app.get('./', async (req, res) => {
+    app.get('/', async (req, res) => {
         return 'teste de carregamento'
     })
 
     app.get('/todos', async (req, res) => {
         const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
-        const lastTwenty = dayjs().subtract(20, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+        const LastThirty = dayjs().subtract(30, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
 
         const todos = await prisma.host.findMany({
             include: {
                 HostQueries: {
                     where: {
                         createdAt: {
-                            gte: lastTwenty,
+                            gte: LastThirty,
                             lte: hour
                         }
                     },
@@ -136,7 +136,7 @@ export async function appRoutes(app: FastifyInstance) {
 
     app.get('/invertidos', async (req, res) => {
         const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
-        const lastTwenty = dayjs().subtract(20, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+        const LastThirty = dayjs().subtract(30, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
 
         const invertidos = await prisma.host.findMany({
             select: {
@@ -145,7 +145,7 @@ export async function appRoutes(app: FastifyInstance) {
                     where: {
                         status: 'Invertido',
                         createdAt: {
-                            gte: lastTwenty,
+                            gte: LastThirty,
                             lte: hour
                         },
                     },
@@ -161,7 +161,7 @@ export async function appRoutes(app: FastifyInstance) {
 
     app.get('/check-ok', async (req, res) => {
         const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
-        const lastTwenty = dayjs().subtract(20, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+        const LastThirty = dayjs().subtract(30, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
 
         const checkOk = await prisma.host.findMany({
             include: {
@@ -169,7 +169,7 @@ export async function appRoutes(app: FastifyInstance) {
                     where: {
                         status: 'Ok',
                         createdAt: {
-                            gte: lastTwenty,
+                            gte: LastThirty,
                             lte: hour
                         }
                     },
