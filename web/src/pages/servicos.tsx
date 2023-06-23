@@ -1,10 +1,11 @@
-import { Menu, Button } from "../components"
+import App from "../components/App"
 
 export function Servicos() {
     return (
         <>
-            <Menu ativo="servicos"/>
-            <p>serviços</p>
+            <App 
+            />
         </>
+
     )
 }
