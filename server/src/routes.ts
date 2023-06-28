@@ -1,12 +1,14 @@
 import { PrismaClient } from '@prisma/client'
 import { FastifyInstance } from 'fastify'
-import { date, z } from 'zod'
+import { z } from 'zod'
 import consultHost  from '../scripts/consult-host.js'
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 
 const prisma = new PrismaClient()
 
 export async function appRoutes(app: FastifyInstance) {
+    
+    const hour = dayjs().subtract(3, 'hour').toDate()
     async function monitorar(){
         function vef( value1:vefConsulta, value2: Consulta){
             if (value1.neighbor !== value2.neighbor) {
@@ -32,9 +34,7 @@ export async function appRoutes(app: FastifyInstance) {
 
         async function query() {
             const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
-            console.log(contador)
             const hostQuery: Consulta[] = await consultHost(dados[contador].ip)
-            console.log(dados[contador].hostname)
             
             var vizinhos = 0 
             function registrar() {
@@ -51,7 +51,6 @@ export async function appRoutes(app: FastifyInstance) {
                             }
                         })
 
-                        console.log('registrado: ' + hostQuery[vizinhos].neighbor + " | horário: " + hour )
                         vizinhos ++
                         setImmediate(registrar)
                     }, 500 )
@@ -62,16 +61,15 @@ export async function appRoutes(app: FastifyInstance) {
             
             setTimeout(() => {
                 if ( contador < dados.length - 1) {
-                    console.log('Consultando próximo')
                     contador ++
                     setImmediate(query)
                 }
-            }, 5000)
+            }, 10000)
         }
             
         query()
 
-        setTimeout(monitorar, 5 * 60 * 1000)
+        setTimeout(monitorar, 30 * 60 * 1000)
     }
     monitorar()
 
@@ -99,7 +97,7 @@ export async function appRoutes(app: FastifyInstance) {
             port: 'consultando',
             remotePort: 'consultando',
             status: 'consultando',
-            createdAt: dayjs().toDate(), 
+            createdAt: hour, 
             id: '',
             hostId: ''
         }]): '' ) 
@@ -107,82 +105,111 @@ export async function appRoutes(app: FastifyInstance) {
         return value
     }
 
+    app.get('/', async (req, res) => {
+        return 'teste de carregamento'
+    })
+
     app.get('/todos', async (req, res) => {
         const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
-        const lastFive = dayjs().subtract(5, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+        const LastThirty = dayjs().subtract(30, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+        const hosts = await prisma.host.findMany()
+        const todos = []
 
-        const todos = await prisma.host.findMany({
-            include: {
-                HostQueries: {
-                    where: {
-                        createdAt: {
-                            gte: lastFive,
-                            lte: hour
-                        }
-                    },
-                    orderBy: {
-                        createdAt: 'asc'
-                    }
+        for(const host of hosts) {
+            const neighborsCount = await prisma.neighbor.count({
+                where: {
+                    hostId: host.id
                 }
-            }
-        })
+            })
 
-        vefConsulta(todos)
-        
+            const HostQueries = await prisma.hostQuery.findMany({
+                where: {
+                    hostId: host.id,
+                    createdAt: {
+                        gte: LastThirty,
+                        lte: hour
+                    },
+                },
+                orderBy: {
+                    createdAt: 'desc'
+                },
+                take: neighborsCount
+            })
+
+            todos.push({hostname: host.hostname, HostQueries: HostQueries})
+            vefConsulta(todos)
+        }
+
         return todos
     });
 
     app.get('/invertidos', async (req, res) => {
         const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
-        const lastFive = dayjs().subtract(5, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+        const LastThirty = dayjs().subtract(30, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+        const hosts = await prisma.host.findMany()
+        const invertidos = []
 
-        const invertidos = await prisma.host.findMany({
-            select: {
-                hostname: true,
-                HostQueries: {
-                    where: {
-                        status: 'Invertido',
-                        createdAt: {
-                            gte: lastFive,
-                            lte: hour
-                        },
-                    },
-                    orderBy: {
-                        createdAt: 'asc'
-                    }
+        for(const host of hosts) {
+            const neighborsCount = await prisma.neighbor.count({
+                where: {
+                    hostId: host.id
                 }
-            }
-        })
+            })
 
-        console.log(invertidos)
+            const HostQueries = await prisma.hostQuery.findMany({
+                where: {
+                    hostId: host.id,
+                    status: 'Invertido',
+                    createdAt: {
+                        gte: LastThirty,
+                        lte: hour
+                    },
+                },
+                orderBy: {
+                    createdAt: 'desc'
+                },
+                take: neighborsCount
+            })
+
+            HostQueries.length == 0 ? '' : invertidos.push({hostname: host.hostname, HostQueries: HostQueries})
+        }
+
         return invertidos
     })
 
     app.get('/check-ok', async (req, res) => {
         const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
-        const lastFive = dayjs().subtract(5, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+        const LastThirty = dayjs().subtract(30, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
+        const hosts = await prisma.host.findMany()
+        const checkOk = []
 
-        const checkOk = await prisma.host.findMany({
-            include: {
-                HostQueries: {
-                    where: {
-                        status: 'Ok',
-                        createdAt: {
-                            gte: lastFive,
-                            lte: hour
-                        }
-                    },
-                    orderBy: {
-                        createdAt: 'asc'
-                    }
+        for(const host of hosts) {
+            const neighborsCount = await prisma.neighbor.count({
+                where: {
+                    hostId: host.id
                 }
-            }
-        })
+            })
 
-        vefConsulta(checkOk)
+            const HostQueries = await prisma.hostQuery.findMany({
+                where: {
+                    hostId: host.id,
+                    status: 'Ok',
+                    createdAt: {
+                        gte: LastThirty,
+                        lte: hour
+                    },
+                },
+                orderBy: {
+                    createdAt: 'desc'
+                },
+                take: neighborsCount
+            })
+
+            checkOk.push({hostname: host.hostname, HostQueries: HostQueries})
+            vefConsulta(checkOk)
+        }
 
         return checkOk
-
     })
 
 

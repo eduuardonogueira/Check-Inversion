@@ -9,8 +9,11 @@ app.register(appRoutes)
 
 
 app.listen({
-    port: 3333,
-    host: "200.129.132.211"
-}).then(() => {
-    console.log(`Server running on http://200.129.132.211:${3333}`)
+    port: 3333, 
+    host: '0.0.0.0'
+}).then((address) => {
+    console.log(`Server running on ${address} \n`)
+}).catch( err => {
+    console.log('Erro starting server: ', err)
+    process.exit(1)
 })

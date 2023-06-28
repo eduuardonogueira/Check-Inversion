@@ -7,17 +7,21 @@ interface IConexoes {
         port: string,
         remotePort: string
     }[],
-    click: Function
+    click: Function,
+    title?: string | undefined
 }
 
-export function Conexoes({consulta, click}: IConexoes): JSX.Element {
+export function Conexoes({consulta, click, title}: IConexoes): JSX.Element {
 
     function enviarInformacao(i: number) {
         click(i)
     }
 
     return (
-        <div className="flex flex-col gap-1 rounded w-full" >
+        <div 
+            className="flex flex-col gap-1 rounded w-full"
+            title={title}
+        >
             {consulta.map((item, index) => (
                 <li className="flex h-min-[0px]" key={index} onClick={() => enviarInformacao(index)}>
                     <span className="bg-[#1E1E1E] text-white w-[50px] font-bold box-border flex items-center justify-center">{index + 1}</span>

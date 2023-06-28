@@ -1,4 +1,4 @@
-import logo from '/public/img/logo-poppa.png'
+import logo from '/src/img/logo-poppa-new.png'
 import { Link } from 'react-router-dom'
 import { Input } from './'
 import { Broadcast, HardDrives, House, PlusSquare } from '@phosphor-icons/react'
@@ -10,7 +10,7 @@ export function Menu({ativo}:{ativo: string}) {
     return (
         <header>
             <nav className='flex h-[100px] z-10 bg-[#202024] items-center justify-between px-8 box-border'>
-                <h1 className="w-[200px] h"><img src={logo} alt="logo" /></h1>
+                <h1 className="w-[120px] h"><img src={logo} alt="logo" /></h1>
             
                 <ul className='flex justify-around items-center w-[50%]'>
                     <li className="flex items-center gap-x-1 text-[#9E9EAC] hover:text-[#548FE7] text-base font-bold" style={ativo == 'visao geral'? active : {}}>

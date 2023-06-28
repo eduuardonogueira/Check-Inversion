@@ -1,9 +1,12 @@
 import { Menu, MenuLateral, Painel } from "../../components";
-import global from '../../styles/style.module.scss'
+import global from '../../styles/style.module.scss';
 import { useEffect, useState } from "react";
 import { api } from "../../lib/axios";
-import style from './visaoGeral.module.scss'
-import { Clock, DownloadSimple, Export, HardDrive, Question, Swap, CheckCircle, User, WarningCircle } from '@phosphor-icons/react'
+import style from './visaoGeral.module.scss';
+import { Clock, DownloadSimple, Export, HardDrive, Question, Swap, CheckCircle, User, WarningCircle } from '@phosphor-icons/react';
+import moment from 'moment';
+
+moment.locale('pt-br')
 
 export function VisaoGeral() {
     type ConsultaHost = {
@@ -26,10 +29,11 @@ export function VisaoGeral() {
         setsolicitacao(get)
     }
 
+    const formatarData = (data:string) => moment.utc(data).utcOffset(0).format('HH:mm:ss DD-MM-YYYY');
 
     useEffect(()=> {
         api.get(solicitacao).then((response) => {setConsultaHosts(response.data)})
-    }, [solicitacao])
+    }, [solicitacao, consultaHosts])
 
     return (
         <>
@@ -85,9 +89,12 @@ export function VisaoGeral() {
                     <article className={`overflow-auto h-[calc(100vh-297px)]`}>
                         { consultaHosts.map((host, index) => (
                             <ul key={index} className={style.host}>
-                                <li className={`${style.hostname} ${host.HostQueries.find((vizinho) => vizinho.status === 'Invertido') ? style.hostInvertido : '' }`} >
-                                    {host.hostname}
-                                </li>
+
+                                { host.HostQueries.length == 0 ? '' : 
+                                    <li className={`${style.hostname} ${host.HostQueries.find((vizinho) => vizinho.status === 'Invertido') ? style.hostInvertido : '' }`} >
+                                        { host.hostname}
+                                    </li>
+                                }
                                 <li>
                                 { 
                                     host.HostQueries.map((query, index) => (
@@ -96,7 +103,7 @@ export function VisaoGeral() {
                                                 <li>{query.neighbor}</li>
                                                 <li>{query.port}</li>
                                                 <li>{query.remotePort}</li>
-                                                <li>{query.createdAt}</li>
+                                                <li>{formatarData(query.createdAt)}</li>
                                                 <li>{query.status}</li>
                                             </div>
                                         </ul>
@@ -106,6 +113,7 @@ export function VisaoGeral() {
                                 
                             </ul>
                         ))}
+                        { consultaHosts.length == 0 ?  <span className={style.aviso}>Nenhuma inversão na rede</span> : <span>{consultaHosts.length}</span>}
                     </article>
                 </main>
             </div>  

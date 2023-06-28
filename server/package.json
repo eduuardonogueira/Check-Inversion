@@ -7,6 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch src/server.ts",
+    "start": "tsx watch src/server.ts",
     "build": "tsc -p tsconfig.json"
   },
   "keywords": [],
@@ -31,6 +32,7 @@
     "net-snmp": "^3.9.1",
     "node-cron": "^3.0.2",
     "prisma": "^4.15.0",
+    "@prisma/client": "^4.12.0",
     "tsx": "^3.12.6"
   }
 }

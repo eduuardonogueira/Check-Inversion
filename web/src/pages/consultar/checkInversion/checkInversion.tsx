@@ -39,9 +39,6 @@ export function CheckInversion() {
     const [ consulta, setConsulta ] = useState<IConsulta[]>(consultaType)
     const [ recentes, setRecentes ] = useState(Array<string>)
     const [ infoRecentes, setInfoRecentes ] = useState<string>()
-    const [ infoConexoes, setInfoConexoes ] = useState<number>(0)
-    const [ informacoes, setInformacoes ] = useState(false)
-    const [ conexaoBanco, setConexaoBanco ] = useState<INeighbor | undefined>()
 
     async function consultarHost(event: FormEvent){
         event.preventDefault()
@@ -64,14 +61,7 @@ export function CheckInversion() {
     }
 
     async function clickConexoes(info: number) {
-        setInfoConexoes(info)
-        setInformacoes(true)
-    
-        const name = consulta[info].neighbor
-
-        await api.post('/consultar/informacoes', { name, ip } ).then(response => (setConexaoBanco(response.data)))
-
-
+        /* Função para exibir as informações da conexão */
     }
 
     return (
@@ -90,7 +80,7 @@ export function CheckInversion() {
                                 required
                                 placeholder='Ip Adress'
                                 autoComplete="off"
-                                onchange={(event) => (setIp(event.target.value), setInfoRecentes(event.target.value), setInformacoes(false))}
+                                onchange={(event) => (setIp(event.target.value), setInfoRecentes(event.target.value))}
                                 value={infoRecentes}
                             />
                             <Button 
@@ -126,14 +116,18 @@ export function CheckInversion() {
                         <div className='flex justify-between items-center mb-3'>
                         <h4 className='text-[#E1E1E6] '>Resultados: {consulta.length }</h4> 
                         <div className='flex justify-between gap-2 text-white'>
-                            <span className='px-4 py-1 bg-[#11346B] rounded'>Fibra</span>
-                            <span className="px-4 py-1 bg-yellow-600 rounded">Metálico</span>
-                            <span className="px-4 py-1 bg-red-700 rounded">Down</span>
+                            <span className='px-4 py-1 bg-[#11346B] rounded'>Ok</span>
+                            <span className="px-4 py-1 bg-yellow-600 rounded">Down</span>
+                            <span className="px-4 py-1 bg-red-700 rounded">Invertido</span>
                         </div>
                         </div>
 
                         <ul className='flex flex-col h-max-full overflow-auto w-full gap-1'>
-                            < Conexoes consulta={consulta} click={clickConexoes}/>
+                            < Conexoes 
+                                consulta={consulta} 
+                                click={clickConexoes}
+                                title={'Aperte para mais informações'}    
+                            />
                         </ul>
                     </>
                     
@@ -141,50 +135,10 @@ export function CheckInversion() {
                 
             </section>
 
-            <section className="">
-                <h1 className={global.titulo}>Informações</h1>
-                    { !informacoes ? '' : (
-                        <>
-                            <article>
-                                <h2 className={global.subTitulo}>Consulta</h2>
-                                <ul className='flex justify-between gap-1'>
-                                <Box classname='w-[50%]' text={consulta[infoConexoes].hostname}/>
-                                <Box classname='w-[50%]' text={consulta[infoConexoes].neighbor}/>
-                                </ul>
-                                <div className='flex justify-between gap-1 mt-1'>
-                                    <ul className='flex flex-col gap-2 w-[50%] text-gray-100'>
-                                        <li>Porta: {consulta[infoConexoes].port}</li>
-                                    </ul>
-                                    <ul className='flex flex-col gap-2 w-[50%] text-gray-100'>
-                                        <li>Porta: {consulta[infoConexoes].remotePort}</li>
-                                    </ul>
-                                </div>
-                            </article>
-
-                            {conexaoBanco ? (
-                                <article>
-                                    <h2 className={`mt-4 ${global.subTitulo}`}>Banco de Dados</h2>
-                                    <ul className='flex justify-between gap-1'>
-                                        <Box classname='w-[50%]' text={conexaoBanco.hostname}/>
-                                        
-                                        <Box classname='w-[50%]' text={conexaoBanco.neighbors[0].neighbor}/>
-                                    </ul>
-                                    {conexaoBanco.neighbors.map((neighbor, index) => (
-                                        <div className='flex justify-between gap-1 mt-1' key={index}>
-                                            <ul className='flex flex-col gap-2 w-[50%] text-gray-100'>
-                                                <li>Porta: {neighbor.port}</li>
-                                            </ul>
-                                            <ul className='flex flex-col gap-2 w-[50%] text-gray-100'>
-                                                <li>Porta: {neighbor.remotePort}</li>
-                                            </ul>
-                                        </div>
-                                    ))}
-                                </article>
-                            ): <Box text="Não disponível" classname='bg-red-900'/> }
-                            
-                        </>
-                    )}
+            <section>
+                {/* card onde ficará as informações */}
             </section>
+
         </main>
     )
 }
