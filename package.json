@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "start": " concurrently \"cd server && npm run server\"  \"cd web && npm run web\" "
+  }
+}
