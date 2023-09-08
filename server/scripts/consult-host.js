@@ -143,7 +143,7 @@ function consultHost(ip) {
                     consulta.push(table);
                 }
                 setTimeout(() => {   
-                    consulta.length == 0 ? '' : resolve(consulta);  
+                    consulta.length == 0 ? '' : resolve(consulta); 
                 }, 50);
             },50)
         }, 50);
@@ -152,4 +152,3 @@ function consultHost(ip) {
 }
 
 module.exports = consultHost;
-

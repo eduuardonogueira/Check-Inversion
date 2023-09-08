@@ -33,8 +33,8 @@ export async function appRoutes(app: FastifyInstance) {
         var contador = 0
 
         async function query() {
-            const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
-            const hostQuery: Consulta[] = await consultHost(dados[contador].ip)
+            const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]');
+            const hostQuery: Consulta[] = await consultHost(dados[contador].ip);
             
             var vizinhos = 0 
             function registrar() {
@@ -67,29 +67,12 @@ export async function appRoutes(app: FastifyInstance) {
             }, 10000)
         }
             
-        query()
+        dados.length == 0 ? '' : query()
 
         setTimeout(monitorar, 30 * 60 * 1000)
     }
+
     monitorar()
-
-
-    /* Rotas */
-
-    /* Visão Geral */
-
-    type bc = {
-        hostname: string,
-        HostQueries: {
-            neighbor: string,
-            port: string,
-            remotePort: string,
-            status: string,
-            createdAt: Date, 
-            id: string,
-            hostId: string
-        }[],
-    }
 
     function vefConsulta( value : bc[]) {
         value.map( host => (host.HostQueries.length == 0) ? host.HostQueries = ([{
@@ -105,6 +88,7 @@ export async function appRoutes(app: FastifyInstance) {
         return value
     }
 
+    /* Rotas */
     app.get('/', async (req, res) => {
         return 'teste de carregamento'
     })
@@ -251,7 +235,6 @@ export async function appRoutes(app: FastifyInstance) {
         return host
     })
 
-
     /* Adicionar */
     app.post('/registrar', async (req) => {
         const horaAtual = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
@@ -299,12 +282,24 @@ export async function appRoutes(app: FastifyInstance) {
     })
 
 
-
-
+    /* Types */
+    type bc = {
+        hostname: string,
+        HostQueries: {
+            neighbor: string,
+            port: string,
+            remotePort: string,
+            status: string,
+            createdAt: Date, 
+            id: string,
+            hostId: string
+        }[],
+    }
 
     type Consulta = {
         hostname: string,
-        neighbor: string
+        neighbor: string,
+        ip: string,
         port: string,
         remotePort: string,
         status: string,

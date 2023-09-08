@@ -6,10 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
+} 
 
 model Host {
   id String @id @default(uuid())
@@ -42,4 +41,3 @@ model HostQuery {
   host Host? @relation(fields: [hostId], references: [id])
   hostId String
 }
-
