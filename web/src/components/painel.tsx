@@ -1,5 +1,3 @@
-
-
 export function Painel() {
     return (
         <header className="w-[calc(100vw-64px-148px)] p-3 bg-[#1C1C20]">

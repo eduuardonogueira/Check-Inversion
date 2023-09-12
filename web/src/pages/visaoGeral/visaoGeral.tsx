@@ -32,7 +32,7 @@ export function VisaoGeral() {
     const formatarData = (data:string) => moment.utc(data).utcOffset(0).format('HH:mm:ss DD-MM-YYYY');
 
     useEffect(()=> {
-        api.get(solicitacao).then((response) => {setConsultaHosts(response.data)})
+        api.get(solicitacao).then((response:any) => {setConsultaHosts(response.data)})
     }, [solicitacao, consultaHosts])
 
     return (

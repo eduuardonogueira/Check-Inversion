@@ -3,6 +3,7 @@
     "start": " concurrently \"cd server && npm run server\"  \"cd web && npm run web\" "
   },
   "dependencies": {
-    "concurrently": "^8.2.0"
+    "concurrently": "^8.2.0",
+    "dotenv": "^16.3.1"
   }
 }

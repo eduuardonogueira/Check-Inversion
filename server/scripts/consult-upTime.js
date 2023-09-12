@@ -58,12 +58,12 @@ function consultHost(ip) {
     
 
     setTimeout(()=> {
-        //console.log(result)
+        console.log(result)
     }, 1000)
 
 }
 
-consultHost('200.139.32.98')
+consultHost('200.18.80.134')
 
 
 
