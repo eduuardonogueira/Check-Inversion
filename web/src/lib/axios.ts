@@ -1,5 +1,8 @@
 import axios from 'axios'
 
+const url : string | undefined = import.meta.env.VITE_AXIOS_URL
+
 export const api = axios.create({
-    baseURL: 'http://ingress.pop-pa.rnp.br:3333/'
+    baseURL: url
 })
+
