@@ -1,12 +1,13 @@
+require('dotenv').config();
 
-function consultHost(ip) {
+function consultHost(ipHost) {
     return new Promise((resolve, reject) => {
         
     var snmp = require ("net-snmp");
 
-    const ipHost = ip;
+    const communityHost = process.env.COMMUNITY_HOST;
 
-    var session = snmp.createSession (ipHost , "v1a1pe@RNPcom91");
+    var session = snmp.createSession (ipHost , communityHost);
 
     var consulta = [];
     var ips = [];
@@ -151,4 +152,22 @@ function consultHost(ip) {
 })
 }
 
+
 module.exports = consultHost;
+
+/* 
+    OID: "1.3.6.1.4.1.1916.1.13.2.1.3"
+    Retorna: Nome dos vizinhos
+
+    OID: "1.3.6.1.4.1.1916.1.13.2.1.4" 
+    Retorna: Systema operacional dos vizinhos
+
+    OID: "1.3.6.1.4.1.1916.1.13.2.1.5"
+    Retorna: Stack da porta remota
+
+    OID: "1.3.6.1.4.1.1916.1.13.2.1.6"
+    Retorna: Porta remota
+
+    OID: "1.3.6.1.4.1.1916.1.13.2.1.7" 
+    Retorna: tempo em segundos da consulta
+*/

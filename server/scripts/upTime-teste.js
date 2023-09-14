@@ -1,17 +1,15 @@
-//1.3.6.1.2.1.1.5.0
-require('dotenv').config({ path: '../../.env'});
+require('dotenv').config({path: "../.env"});
 
-
-
-function consult(ip) {
+function consult(ipHost) {
     var snmp = require('net-snmp');
 
-    const ipHost = ip
     const communityHost = process.env.COMMUNITY_HOST
 
+    console.log(communityHost, ipHost)
     var session = snmp.createSession(ipHost, communityHost);
 
-    var oid = "1.3.6.1.2.1.1.3.0";
+    //var oid = "1.3.6.1.4.1.2636.3.2.1.1"
+    var oid = "1.3.6.1.4.1.2636.3.35.1.1.1.3";
     
     function doneCb (error) {
         if (error)
@@ -28,10 +26,10 @@ function consult(ip) {
     }
     
     var maxRepetitions = 20;
-    
-    // The maxRepetitions argument is optional, and will be ignored unless using
-    // SNMP verison 2c
     session.subtree (oid, maxRepetitions, feedCb, doneCb);
 }
 
-consult('200.139.32.98');
+consult('200.18.80.102');
+
+
+// link das MIBS: https://apps.juniper.net/mib-explorer/navigate?software=Junos%20OS&release=23.2R1&name=mplsVersion&oid=1.3.6.1.4.1.2636.3.2.1.1

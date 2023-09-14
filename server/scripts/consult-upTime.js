@@ -1,22 +1,29 @@
-require('dotenv').config({ path: '../../.env'});
-const dayjs = require('dayjs')
+require('dotenv').config({path: "../.env"});
 
-function consultHost(ip) {
+function consultUpTime(ipHost) {
+    const dayjs = require('dayjs');
     var snmp = require('net-snmp');
 
-    const ipHost = ip;
-    const communityHost = process.env.COMMUNITY_HOST
-    var result = new Object
+    const communityHost = process.env.COMMUNITY_HOST;
+    var result = new Object;
     var cont = 0;
 
-
     var session = snmp.createSession(ipHost, communityHost);
-    var oid = "1.3.6.1.4.1.2636.3.1.5.0"
+
+    if (ipHost.startsWith('200') == true){
+        var oid = "1.3.6.1.4.1.2636.3.35.1.1.1.3"
+    }else{
+        var oid = "1.3.6.1.2.1.1";
+    }
+
+    console.log(oid)
+
+    //var oid = "1.3.6.1.2.1.1";
 
     function doneCb (error) {
         if (error)
             console.error (error.toString ());
-    }
+    };
 
     function feedCb (varbinds) {
         for (var i = 0; i < varbinds.length; i++) {
@@ -26,8 +33,7 @@ function consultHost(ip) {
                 valor = varbinds[i].value;
                 oid = varbinds[i].oid;
 
-
-                console.log(valor, oid);
+                console.log(`${oid} | ${valor}`)
 
                 switch (cont) {
                     case 0:
@@ -46,26 +52,27 @@ function consultHost(ip) {
                         result.hostname = valor.toString()
                         break
                     case 6:
+                        result.sysServices = valor
                         break
                 }
 
                 cont ++;
             }   
         }  
-    }
+    };
     var maxRepetitions = 20;
     session.subtree (oid, maxRepetitions, feedCb, doneCb); 
     
 
     setTimeout(()=> {
         console.log(result)
-    }, 1000)
+    }, 1000);
 
 }
 
-consultHost('200.18.80.134')
+consultUpTime("172.16.8.1");
 
-
+module.exports = consultUpTime;
 
 //1.3.6.1.2.1.1
 /* 
@@ -85,27 +92,6 @@ consultHost('200.18.80.134')
     Retorna: hostname
 
     OID: "1.3.6.1.2.1.1.7.0" 
-    Retorna: 
+    Retorna: sysServices
 
-*/
-
-
-
-
-
-/* 
-    OID: "1.3.6.1.4.1.1916.1.13.2.1.3"
-    Retorna: Nome dos vizinhos
-
-    OID: "1.3.6.1.4.1.1916.1.13.2.1.4" 
-    Retorna: Systema operacional dos vizinhos
-
-    OID: "1.3.6.1.4.1.1916.1.13.2.1.5"
-    Retorna: Stack da porta remota
-
-    OID: "1.3.6.1.4.1.1916.1.13.2.1.6"
-    Retorna: Porta remota
-
-    OID: "1.3.6.1.4.1.1916.1.13.2.1.7" 
-    Retorna: tempo em segundos da consulta
 */
