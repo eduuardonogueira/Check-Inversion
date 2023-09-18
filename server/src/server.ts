@@ -9,11 +9,14 @@ const app = Fastify()
 app.register(cors)
 app.register(appRoutes)
 
+const portString: string | undefined = process.env.BACKEND_PORT 
+const port = parseInt(portString == undefined ? '': portString )
+
 app.listen({
-    port: 3333, 
+    port: port, 
     host: '0.0.0.0'
 }).then((address) => {
-    console.log(`Server running on ${address} \n`,)
+    console.log(`Server running on ${address}`,)
 }).catch( err => {
     console.log('Erro starting server: ', err, )
     process.exit(1)
