@@ -9,13 +9,14 @@ interface Objeto {
 interface IMenuLateral {
     titulo: string,
     lista: Objeto[],
-    alterarLista: (get: string) => void
+    alterarLista?: ((get: string) => void | undefined) | undefined
 }
 
 
 export function MenuLateral({titulo, lista, alterarLista }:IMenuLateral): JSX.Element {
 
-    function setarLista(lista: string) {
+
+    function setLista(lista: string) {
         alterarLista(lista)
     }
 
@@ -45,7 +46,7 @@ export function MenuLateral({titulo, lista, alterarLista }:IMenuLateral): JSX.El
                     <li 
                         key={index} 
                         className='flex items-center justify-start gap-1 p-1 w-full text-white font-bold hover:bg-[#044FBF] hover:cursor-pointer'
-                        onClick={ () => (clickMenu(index), setarLista(item.get))}
+                        onClick={ () => (clickMenu(index), setLista(item.get))}
                         style={{ backgroundColor: ativo[index] } as any}
                     >
                         {item.icone}

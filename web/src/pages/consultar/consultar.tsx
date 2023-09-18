@@ -1,7 +1,7 @@
 import { Menu, MenuLateral, Painel } from '../../components'
 import { Swap, WarningCircle } from '@phosphor-icons/react'
 import global from '../../styles/style.module.scss'
-import { CheckInversion } from './checkInversion/checkInversion'
+import { CheckInversion } from './inversao/inversao'
 
 export function Consultar() {
 
@@ -13,11 +13,12 @@ export function Consultar() {
                     titulo='Scripts'
                     lista={[{
                         nome: "inversão",
-                        icone: <Swap size={22}/>
+                        icone: <Swap size={22}/>,
                     },{
                         nome: "Tempo de atividade",
-                        icone: <WarningCircle size={22}/>
+                        icone: <WarningCircle size={22}/>,
                     }]}
+
                 />
                 <Painel />
                 < CheckInversion />

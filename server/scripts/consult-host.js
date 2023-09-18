@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({path: "../.nev"});
 
 function consultHost(ipHost) {
     return new Promise((resolve, reject) => {
