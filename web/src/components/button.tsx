@@ -5,7 +5,7 @@ interface IButton {
     onClick?: () => void
 }
 
-export function Button({type, text, style, onClick}: IButton) {
+export function Button({ type, text, style, onClick }: IButton) {
     return (  
         <button
             type={type}

@@ -3,15 +3,8 @@ import { Button, Input, Box, Conexoes, Load } from '../../../components'
 import { api } from "../../../lib/axios"
 import style from './checkInversion.module.scss'
 import global from '../../../styles/style.module.scss'
+import { Query } from '../../../types/queryTypes'
 
-interface IConsulta {
-    hostname: string,
-    ip: string,
-    neighbor: string ,
-    port: string,
-    remotePort: string,
-    erro: string | any
-}
 
 interface INeighbor {
     hostname: string,
@@ -26,7 +19,7 @@ interface INeighbor {
 }
 
 export function CheckInversion() {
-    const consultaType = [{
+    const queryType = [{
         hostname: '',
         ip: '',
         neighbor: '',
@@ -36,31 +29,26 @@ export function CheckInversion() {
     }]
 
     const [ ip, setIp ] = useState<string>('')
-    const [ consulta, setConsulta ] = useState<IConsulta[]>(consultaType)
-    const [ recentes, setRecentes ] = useState(Array<string>)
-    const [ infoRecentes, setInfoRecentes ] = useState<string>()
+    const [ query, setQuery ] = useState<Query>(queryType)
+    const [ recent, setRecent ] = useState<Array<string>>([])
 
-    async function consultarHost(event: FormEvent){
+    async function queryHost(event: FormEvent){
         event.preventDefault()
-        setConsulta(consultaType)
+
+        setQuery(queryType)
 
         if(ip.length ==0)
             return
 
         await api.post('/consultar', { ip }).then(response => (
-            typeof(response.data) == 'string' ? setConsulta( consultaAntiga => [...consultaAntiga, consultaAntiga[0].erro = response.data]) : 
-            setConsulta(response.data)))
+            typeof(response.data) == 'string' ? setQuery( lastQuery => [...lastQuery, lastQuery[0].erro = response.data]) : setQuery(response.data)
+        ))
         
-        setRecentes( recentesAntigos => [ ip, ...recentesAntigos])
-        setInfoRecentes('')
+        setRecent( lastRecent => [ ip, ...lastRecent])
+        setIp('')
     }
 
-    function clickRecente(info: string) {
-        setInfoRecentes(info)
-        setIp(info)
-    }
-
-    async function clickConexoes(info: number) {
+    async function clickConnection(info: number) {
         /* Função para exibir as informações da conexão */
     }
 
@@ -69,7 +57,7 @@ export function CheckInversion() {
             <section className="flex flex-col">
                 <h1 className={global.titulo}>Consultar Host</h1>
                 <div className='flex justify-between h-[230px]'>
-                    <form onSubmit={consultarHost} className='flex flex-col w-[calc(70%-8px)] h-full gap-1 justify-end'>
+                    <form onSubmit={queryHost} className='flex flex-col w-[calc(70%-8px)] h-full gap-1 justify-end'>
                         <p className='text-gray-400 w-[100%] text-sm'>Consulte os vizinhos que fazem conexões com o switch e obtenha informações detalhadas sobre os enlaces.</p>
                         
                         <div className='flex flex-col gap-1'>
@@ -80,8 +68,8 @@ export function CheckInversion() {
                                 required
                                 placeholder='Ip Adress'
                                 autoComplete="off"
-                                onchange={(event) => (setIp(event.target.value), setInfoRecentes(event.target.value))}
-                                value={infoRecentes}
+                                onchange={(event) => (setIp(event.target.value))}
+                                value={ip}
                             />
                             <Button 
                                 text='Consultar'
@@ -92,12 +80,12 @@ export function CheckInversion() {
                     </form>
 
                     <aside className='w-[30%] max-h-full rounded bg-[#2a2a2e] p-2'>
-                        <h2 className='text-[#E1E1E6] mb-3'>Recentes: {recentes.length} </h2>
+                        <h2 className='text-[#E1E1E6] mb-3'>Recentes: {recent.length} </h2>
                             
-                        {recentes.length <= 0 ? <span></span> : (
+                        {recent.length <= 0 ? <span></span> : (
                             <ul className='text-white flex flex-col gap-1 h-[194px] overflow-auto'>
-                                {recentes.map((item, index) => (
-                                    <Box key={index} text={item} click={clickRecente} />
+                                {recent.map((item, index) => (
+                                    <Box key={index} text={item} click={ () => setIp(recent[index]) } />
                                 ))}
                             </ul>)
                         }
@@ -109,12 +97,12 @@ export function CheckInversion() {
             {/* Conexões */}
             <section className="flex flex-col pb-3 ">
                 <h1 className={global.titulo}>Conexões</h1>
-                { ip.length == 0 && consulta[0].hostname == '' ? <span className='text-center text-gray-300'>Digite o Ip e consulte para exibir os resultados</span> : ''}
-                { consulta[0].erro !== '' && consulta[0].hostname == '' ? < Box text={`ERRO: ${consulta[0].erro}`} classname='bg-red-800 hover:' /> : '' }
-                { consulta[0].hostname == '' ? '' : (
+                { ip.length == 0 && query[0].hostname == '' ? <span className='text-center text-gray-300'>Digite o Ip e consulte para exibir os resultados</span> : ''}
+                { query[0].erro !== '' && query[0].hostname == '' ? < Box text={`ERRO: ${query[0].erro}`} classname='bg-red-800 hover:' /> : '' }
+                { query[0].hostname == '' ? '' : (
                     <>
                         <div className='flex justify-between items-center mb-3'>
-                        <h4 className='text-[#E1E1E6] '>Resultados: {consulta.length }</h4> 
+                        <h4 className='text-[#E1E1E6] '>Resultados: {query.length }</h4> 
                         <div className='flex justify-between gap-2 text-white'>
                             <span className='px-4 py-1 bg-[#11346B] rounded'>Ok</span>
                             <span className="px-4 py-1 bg-yellow-600 rounded">Down</span>
@@ -124,8 +112,8 @@ export function CheckInversion() {
 
                         <ul className='flex flex-col h-max-full overflow-auto w-full gap-1'>
                             < Conexoes 
-                                consulta={consulta} 
-                                click={clickConexoes}
+                                query={query} 
+                                click={clickConnection}
                                 title={'Aperte para mais informações'}    
                             />
                         </ul>

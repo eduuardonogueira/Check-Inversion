@@ -7,20 +7,20 @@ export function Consultar() {
 
     return (
         <>
-            <Menu ativo="consultar"/>
+            < Menu active="consultar" />
             <div className={`mx-8 mt-14 w-vw ${global.grid}`}>
-                <MenuLateral 
-                    titulo='Scripts'
-                    lista={[{
-                        nome: "inversão",
-                        icone: <Swap size={22}/>,
+                < MenuLateral 
+                    title='Scripts'
+                    list={[{
+                        name: "inversão",
+                        icon: <Swap size={22}/>,
                     },{
-                        nome: "Tempo de atividade",
-                        icone: <WarningCircle size={22}/>,
+                        name: "Tempo de atividade",
+                        icon: <WarningCircle size={22}/>,
                     }]}
 
                 />
-                <Painel />
+                < Painel />
                 < CheckInversion />
             </div>
         </>

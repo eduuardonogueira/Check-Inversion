@@ -70,7 +70,7 @@ export function Verificar() {
                         </button>
                         
                         <section className='flex flex-col w-[90%] gap-10'>
-                            <Conexoes consulta={verificar} click={() => ''}/>
+                            <Conexoes query={verificar} click={() => ''}/>
 
                             <Button text='Registrar' onClick={registrar} />
 

@@ -1,15 +1,18 @@
-import { Menu, MenuLateral, Painel } from "../../components";
-import global from '../../styles/style.module.scss';
-import { useEffect, useState } from "react";
-import { api } from "../../lib/axios";
-import style from './visaoGeral.module.scss';
 import { Clock, DownloadSimple, Export, HardDrive, Question, Swap, CheckCircle, User, WarningCircle } from '@phosphor-icons/react';
+import { Menu, MenuLateral, Painel } from '../../components';
+import { useEffect, useState } from 'react';
+import global from '../../styles/style.module.scss';
+import style from './visaoGeral.module.scss';
+import { api } from '../../lib/axios';
 import moment from 'moment';
 
+// Set the location to the moment
 moment.locale('pt-br')
 
+
 export function VisaoGeral() {
-    type ConsultaHost = {
+
+    type QueryHost = {
         hostname: string,
         ip: string,
         HostQueries: {
@@ -22,39 +25,41 @@ export function VisaoGeral() {
         createdAt: string
     }
 
-    const [ consultaHosts, setConsultaHosts ] = useState<ConsultaHost[]>([])
-    const [ solicitacao, setsolicitacao ] = useState('/todos')
 
-    function alterarLista(get: string) {
-        setsolicitacao(get)
-    }
-
+    const [ queryHosts, setQueryHosts ] = useState<QueryHost[]>([])
+    const [ request, setRequest ] = useState('/todos')
     const formatarData = (data:string) => moment.utc(data).utcOffset(0).format('HH:mm:ss DD-MM-YYYY');
 
+
+    function changeList(get: string) {
+        setRequest(get)
+    }
+
+
     useEffect(()=> {
-        api.get(solicitacao).then((response:any) => {setConsultaHosts(response.data)})
-    }, [solicitacao, consultaHosts])
+        api.get(request).then((response:any) => {setQueryHosts(response.data)})
+    }, [request, queryHosts])
 
     return (
         <>
-            <Menu ativo="visao geral"/>
+            <Menu active="visao geral"/>
             <div className={`mx-8 mt-14 w-vw ${global.grid}`}>
                 <MenuLateral 
-                    titulo='Menu'
-                    lista={[{
-                        nome: 'Todos',
-                        icone: <User size={22} />,
+                    title='Menu'
+                    list={[{
+                        name: 'Todos',
+                        icon: <User size={22} />,
                         get: '/todos'
                     }, {
-                        nome: 'Invertidos',
-                        icone: <WarningCircle size={22} />,
+                        name: 'Invertidos',
+                        icon: <WarningCircle size={22} />,
                         get: '/invertidos'
                     }, {
-                        nome: 'Check-Ok',
-                        icone: <CheckCircle size={22} />,
+                        name: 'Check-Ok',
+                        icon: <CheckCircle size={22} />,
                         get: '/check-ok'
                     }]}
-                    alterarLista={alterarLista}
+                    changeList={changeList}
                 />
                 <Painel />
                 <main>
@@ -87,9 +92,8 @@ export function VisaoGeral() {
                         </ul>
                     </h2>
                     <article className={`overflow-auto h-[calc(100vh-297px)]`}>
-                        { consultaHosts.map((host, index) => (
+                        { queryHosts.map((host, index) => (
                             <ul key={index} className={style.host}>
-
                                 { host.HostQueries.length == 0 ? '' : 
                                     <li className={`${style.hostname} ${host.HostQueries.find((vizinho) => vizinho.status === 'Invertido') ? style.hostInvertido : '' }`} >
                                         { host.hostname}
@@ -113,7 +117,7 @@ export function VisaoGeral() {
                                 
                             </ul>
                         ))}
-                        { consultaHosts.length == 0 ?  <span className={style.aviso}>Nenhuma inversão na rede</span> : <span>{consultaHosts.length}</span>}
+                        { queryHosts.length == 0 ?  <span className={style.aviso}>Nenhuma inversão na rede</span> : <span>{queryHosts.length}</span> }
                     </article>
                 </main>
             </div>  

@@ -12,9 +12,11 @@ app.register(appRoutes)
 const portString: string | undefined = process.env.BACKEND_PORT 
 const port = parseInt(portString == undefined ? '': portString )
 
+const host = process.env.BACKEND_HOST
+
 app.listen({
     port: port, 
-    host: '0.0.0.0'
+    host: host
 }).then((address) => {
     console.log(`Server running on ${address}`,)
 }).catch( err => {
