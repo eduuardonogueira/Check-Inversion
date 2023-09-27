@@ -93,6 +93,16 @@ export async function appRoutes(app: FastifyInstance) {
         return 'teste de carregamento'
     })
 
+    app.get('/hosts', async (req, res) => {
+        const hosts = await prisma.host.findMany({
+            include: {
+                neighbors: true,
+            }
+        })
+
+        return hosts
+    })
+
     app.get('/todos', async (req, res) => {
         const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
         const LastThirty = dayjs().subtract(30, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
