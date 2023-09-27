@@ -37,14 +37,14 @@ export function CheckInversion() {
 
         setQuery(queryType)
 
-        if(ip.length ==0)
+        if(ip.length == 0)
             return
 
         await api.post('/consultar', { ip }).then(response => (
             typeof(response.data) == 'string' ? setQuery( lastQuery => [...lastQuery, lastQuery[0].erro = response.data]) : setQuery(response.data)
         ))
         
-        setRecent( lastRecent => [ ip, ...lastRecent])
+        recent.includes(ip) ? '' : setRecent( lastRecent => [ ip, ...lastRecent])
         setIp('')
     }
 
@@ -76,7 +76,6 @@ export function CheckInversion() {
                                 type='submit'
                             />
                         </div>
-                        
                     </form>
 
                     <aside className='w-[30%] max-h-full rounded bg-[#2a2a2e] p-2'>
@@ -85,7 +84,7 @@ export function CheckInversion() {
                         {recent.length <= 0 ? <span></span> : (
                             <ul className='text-white flex flex-col gap-1 h-[194px] overflow-auto'>
                                 {recent.map((item, index) => (
-                                    <Box key={index} text={item} click={ () => setIp(recent[index]) } />
+                                    <Box key={index} text={item} click={() => setIp(item)} />
                                 ))}
                             </ul>)
                         }
