@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "web": "tsc && vite build --config vite.config.ts && vite --config vite.config.ts",
+    "web": "tsc && vite build && vite --config vite.config.ts",
     "dev": "vite --host",
+    "test":"vite --config vite.config.ts",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
