@@ -18,7 +18,7 @@ app.listen({
     port: port, 
     host: host
 }).then((address) => {
-    console.log(`Server running on ${address}`,)
+    console.log(`Server running on ${address}`)
 }).catch( err => {
     console.log('Erro starting server: ', err, )
     process.exit(1)

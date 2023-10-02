@@ -11,7 +11,6 @@ moment.locale('pt-br')
 
 
 export function VisaoGeral() {
-
     type QueryHost = {
         hostname: string,
         ip: string,
@@ -25,7 +24,6 @@ export function VisaoGeral() {
         createdAt: string
     }
 
-
     const [ queryHosts, setQueryHosts ] = useState<QueryHost[]>([])
     const [ request, setRequest ] = useState('/todos')
     const formatarData = (data:string) => moment.utc(data).utcOffset(0).format('HH:mm:ss DD-MM-YYYY');
@@ -34,7 +32,6 @@ export function VisaoGeral() {
     function changeList(get: string) {
         setRequest(get)
     }
-
 
     useEffect(()=> {
         api.get(request).then((response:any) => {setQueryHosts(response.data)})
