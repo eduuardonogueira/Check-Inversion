@@ -9,70 +9,71 @@ const prisma = new PrismaClient()
 export async function appRoutes(app: FastifyInstance) {
     
     const hour = dayjs().subtract(3, 'hour').toDate()
+
     async function monitorar(){
-        function vef( value1:vefConsulta, value2: Consulta){
-            if (value1.neighbor !== value2.neighbor) {
-                return 'Invertido'
-            }
-            if (value1.port !== value2.port) {
-                return 'Invertido'
-            }
-            if (value1.remotePort !== value2.remotePort) {
+        function vef( value1: vefConsulta, value2: Consulta ){
+            if (value1.neighbor !== value2.neighbor && value1.port !== value2.port && value1.remotePort !== value2.remotePort) {
                 return 'Invertido'
             }
 
             return 'Ok'
         }
 
-        const dados = await prisma.host.findMany({
+        const hostsDatabase = await prisma.host.findMany({
             include: {
                 neighbors: true,
             }
         })
 
-        var contador = 0
+        var host = 0
 
-        async function query() {
+        async function queryHost() {
             const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]');
-            const hostQuery: Consulta[] = await consultHost(dados[contador].ip);
+            const hostQuery: Consulta[] = await consultHost(hostsDatabase[host].ip);
             
-            var vizinhos = 0 
+            var neighbor = 0;
+
+            console.log(hostQuery[neighbor])
             function registrar() {
-                if ( vizinhos < hostQuery.length ) {
+                if ( neighbor < hostsDatabase[host].neighbors.length ) {
+                    const databaseNeighbor = hostsDatabase[host].neighbors[neighbor];
+                    const queryNeighbor = hostQuery[neighbor];
+                    const hostDown = queryNeighbor == null ? true : false
+
                     setTimeout( async () => {
                         await prisma.hostQuery.create({
                             data: {
-                                host: { connect: { id: dados[contador].id } },
-                                neighbor: hostQuery[vizinhos].neighbor,
-                                port: hostQuery[vizinhos].port,
-                                remotePort: hostQuery[vizinhos].remotePort,
-                                status: vef(dados[contador].neighbors[vizinhos], hostQuery[vizinhos]) == 'Invertido' ? 'Invertido' : 'Ok' ,
+                                host: { connect: { id: hostsDatabase[host].id } },
+                                neighbor: hostDown ? databaseNeighbor.neighbor : queryNeighbor.neighbor,
+                                port: hostDown ? databaseNeighbor.port : queryNeighbor.port,
+                                remotePort: hostDown ? databaseNeighbor.remotePort : queryNeighbor.remotePort,
+                                status: hostDown ? 'Down' : vef(databaseNeighbor, queryNeighbor) == 'Invertido' ? 'Invertido' : 'Ok',
                                 createdAt: hour
                             }
                         })
 
-                        vizinhos ++
+                        neighbor ++
                         setImmediate(registrar)
                     }, 500 )
-                }
+                }   
             }
 
             registrar()
             
             setTimeout(() => {
-                if ( contador < dados.length - 1) {
-                    contador ++
-                    setImmediate(query)
+                if ( host < hostsDatabase.length - 1) {
+                    host ++
+                    setImmediate(queryHost)
                 }
             }, 10000)
         }
             
-        dados.length == 0 ? '' : query()
+        hostsDatabase.length == 0 ? '' : queryHost()
 
         setTimeout(monitorar, 30 * 60 * 1000)
     }
 
-    monitorar()
+    //monitorar()
 
     function vefConsulta( value : bc[]) {
         value.map( host => (host.HostQueries.length == 0) ? host.HostQueries = ([{
@@ -208,20 +209,21 @@ export async function appRoutes(app: FastifyInstance) {
 
 
     /* Consulta */
-    app.post('/consultar', async (req) => {
-
+    app.get('/consultar/:ip', async (req) => {
         const createIpBody = z.object({
             ip: z.string()
         })
 
-        const { ip } = createIpBody.parse(req.body)
+        const { ip } = createIpBody.parse(req.query)
 
         const consulta = await consultHost(ip)
 
         return consulta
     })
 
-    app.post('/consultar/informacoes', async (req) => {
+
+    // TODO: change the request information in invesao page
+    app.get('/consultar/:name/:ip', async (req) => {
         const createDataBody = z.object({
             name: z.string(),
             ip: z.string(),

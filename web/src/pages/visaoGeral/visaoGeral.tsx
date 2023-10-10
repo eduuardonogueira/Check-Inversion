@@ -35,7 +35,7 @@ export function VisaoGeral() {
 
     useEffect(()=> {
         api.get(request).then((response:any) => {setQueryHosts(response.data)})
-    }, [request, queryHosts])
+    }, [request])
 
     return (
         <>
@@ -92,15 +92,15 @@ export function VisaoGeral() {
                         { queryHosts.map((host, index) => (
                             <ul key={index} className={style.host}>
                                 { host.HostQueries.length == 0 ? '' : 
-                                    <li className={`${style.hostname} ${host.HostQueries.find((vizinho) => vizinho.status === 'Invertido') ? style.hostInvertido : '' }`} >
-                                        { host.hostname}
+                                    <li className={`${style.hostname} ${host.HostQueries.find((vizinho) => vizinho.status !== 'Ok' ) ? style.hostInvertido : '' }`} >
+                                        { host.hostname }
                                     </li>
                                 }
                                 <li>
                                 { 
                                     host.HostQueries.map((query, index) => (
                                         <ul key={index}>
-                                            <div className={`${style.enlace} ${ query.status == "Invertido" ? style.invertido : '' }`}>
+                                            <div className={`${style.enlace} ${ query.status !== 'Ok' ? style.invertido : '' }`}>
                                                 <li>{query.neighbor}</li>
                                                 <li>{query.port}</li>
                                                 <li>{query.remotePort}</li>
@@ -114,7 +114,7 @@ export function VisaoGeral() {
                                 
                             </ul>
                         ))}
-                        { queryHosts.length == 0 ?  <span className={style.aviso}>Nenhuma inversão na rede</span> : <span>{queryHosts.length}</span> }
+                        { queryHosts.length == 0 ?  <span className={style.aviso}> Nenhuma inversão na rede </span> : <span>{ queryHosts.length }</span> }
                     </article>
                 </main>
             </div>  

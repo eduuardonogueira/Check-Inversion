@@ -15,7 +15,7 @@ export function Menu ({ active }:{active: string}) {
     const hostsFilter = hosts.filter( host => search !== '' && host.hostname.toLowerCase().includes(search.toLowerCase()))
 
     useEffect(() => {
-        api.get('/hosts').then((response) => (setHosts(response.data), console.log(response.data)))
+        api.get('/hosts').then((response) => (setHosts(response.data)))
     }, [])
 
  

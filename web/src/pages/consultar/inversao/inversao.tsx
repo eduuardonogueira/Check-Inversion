@@ -10,10 +10,10 @@ interface INeighbor {
     hostname: string,
     ip: string,
     neighbors: [{
-      neighbor: string,
-      port: string,
-      remotePort: string,
-      updatedAt: string  
+        neighbor: string,
+        port: string,
+        remotePort: string,
+        updatedAt: string  
     }],
     updatedAt: string
 }
@@ -40,7 +40,11 @@ export function CheckInversion() {
         if(ip.length == 0)
             return
 
-        await api.post('/consultar', { ip }).then(response => (
+        await api.get('/consultar/', { 
+            params: { 
+                ip: ip 
+            } 
+        }).then(response => (
             typeof(response.data) == 'string' ? setQuery( lastQuery => [...lastQuery, lastQuery[0].erro = response.data]) : setQuery(response.data)
         ))
         
@@ -57,7 +61,10 @@ export function CheckInversion() {
             <section className="flex flex-col">
                 <h1 className={global.titulo}>Consultar Host</h1>
                 <div className='flex justify-between h-[230px]'>
-                    <form onSubmit={queryHost} className='flex flex-col w-[calc(70%-8px)] h-full gap-1 justify-end'>
+                    <form 
+                        onSubmit={queryHost}
+                        className='flex flex-col w-[calc(70%-8px)] h-full gap-1 justify-end'
+                    >
                         <p className='text-gray-400 w-[100%] text-sm'>Consulte os vizinhos que fazem conexões com o switch e obtenha informações detalhadas sobre os enlaces.</p>
                         
                         <div className='flex flex-col gap-1'>
