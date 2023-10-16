@@ -1,9 +1,9 @@
 import { Menu, MenuLateral, Painel } from '../../components'
-import { Verificar } from './verificar/verificar'
+import { Verificar } from './Verificar'
 import { PlusCircle, Trash } from '@phosphor-icons/react'
 import global from '../../styles/style.module.scss'
 
-export function Adicionar() {
+export const Adicionar = () => {
     return (
         <>
             <Menu active='adicionar'/> 

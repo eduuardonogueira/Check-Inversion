@@ -1,4 +1,4 @@
-import { Query } from '../types/queryTypes'
+import { Query } from '../types/Query'
 
 interface IConexoes {
     query: Query,

@@ -33,7 +33,6 @@ export async function appRoutes(app: FastifyInstance) {
             
             var neighbor = 0;
 
-            console.log(hostQuery[neighbor])
             function registrar() {
                 if ( neighbor < hostsDatabase[host].neighbors.length ) {
                     const databaseNeighbor = hostsDatabase[host].neighbors[neighbor];
@@ -136,7 +135,7 @@ export async function appRoutes(app: FastifyInstance) {
         }
 
         return todos
-    });
+    })
 
     app.get('/invertidos', async (req, res) => {
         const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')

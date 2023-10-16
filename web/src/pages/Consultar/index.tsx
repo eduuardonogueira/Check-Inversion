@@ -1,10 +1,9 @@
 import { Menu, MenuLateral, Painel } from '../../components'
 import { Swap, WarningCircle } from '@phosphor-icons/react'
 import global from '../../styles/style.module.scss'
-import { CheckInversion } from './inversao/inversao'
+import { Inversao } from './Inversao/'
 
-export function Consultar() {
-
+export const Consultar = () => {
     return (
         <>
             < Menu active="consultar" />
@@ -18,10 +17,9 @@ export function Consultar() {
                         name: "Tempo de atividade",
                         icon: <WarningCircle size={22}/>,
                     }]}
-
                 />
                 < Painel />
-                < CheckInversion />
+                < Inversao />
             </div>
         </>
     )

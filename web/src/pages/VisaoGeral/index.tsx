@@ -2,19 +2,19 @@ import { Clock, DownloadSimple, Export, HardDrive, Question, Swap, CheckCircle, 
 import { Menu, MenuLateral, Painel } from '../../components';
 import { useEffect, useState } from 'react';
 import global from '../../styles/style.module.scss';
-import style from './visaoGeral.module.scss';
-import { api } from '../../lib/axios';
+import style from './styles.module.scss';
+import { api } from '../../hooks/useApi';
 import moment from 'moment';
 
 // Set the location to the moment
 moment.locale('pt-br')
 
 
-export function VisaoGeral() {
+export const VisaoGeral = () => {
     type QueryHost = {
         hostname: string,
         ip: string,
-        HostQueries: {
+        HostQueries: { 
             neighbor: string,
             port: string,
             remotePort: string,

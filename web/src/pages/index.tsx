@@ -1,10 +1,8 @@
-export * from './login';
-export * from './visaoGeral/visaoGeral';
+export * from './Login';
+export * from './VisaoGeral';
 
-export * from './consultar/consultar';
-export * from './consultar/inversao/inversao'
+export * from './Consultar';
+export * from './Consultar/Inversao'
 
-export * from './adicionar/adicionar';
-export * from './adicionar/verificar/verificar'
-
-export * from './servicos';
+export * from './Adicionar';
+export * from './Adicionar/Verificar'

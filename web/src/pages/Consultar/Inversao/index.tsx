@@ -1,9 +1,9 @@
 import { useState, FormEvent } from "react"
 import { Button, Input, Box, Conexoes, Load } from '../../../components'
-import { api } from "../../../lib/axios"
+import { api } from "../../../hooks/useApi"
 import style from './checkInversion.module.scss'
 import global from '../../../styles/style.module.scss'
-import { Query } from '../../../types/queryTypes'
+import { Query } from '../../../types/Query'
 
 
 interface INeighbor {
@@ -18,7 +18,7 @@ interface INeighbor {
     updatedAt: string
 }
 
-export function CheckInversion() {
+export const Inversao = () => {
     const queryType = [{
         hostname: '',
         ip: '',

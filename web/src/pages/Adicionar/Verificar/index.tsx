@@ -1,10 +1,10 @@
 import { Box, Button, Conexoes, Input } from '../../../components'
 import { ArrowLeft } from '@phosphor-icons/react'
 import global from '../../../styles/style.module.scss'
-import { api } from '../../../lib/axios'
+import { api } from '../../../hooks/useApi'
 import { FormEvent, useState } from 'react'
 
-export function Verificar() {
+export const Verificar = () => {
     const consultaType = [{
         hostname: '',
         ip: '',
