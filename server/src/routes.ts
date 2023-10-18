@@ -93,7 +93,7 @@ export async function appRoutes(app: FastifyInstance) {
         setTimeout(monitorar, 30 * 60 * 1000)
     }
 
-    //monitorar()
+    monitorar()
 
     function vefConsulta( value : bc[]) {
         value.map( host => (host.HostQueries.length == 0) ? host.HostQueries = ([{
