@@ -15,12 +15,12 @@ const auth = (username: string, password: string) => {
 
     const options = {
         ldapOpts: {
-            url: "ldap://arabica.pop-pa.rnp.br"// process.env.LDAP_ENDPOINT
+            url: process.env.LDAP_ENDPOINT || ""
         },
-        adminDn: 'uid=nagiosadmin,ou=sistemas,ou=usuarios,dc=pop-pa,dc=rnp,dc=br',
-        adminPassword: 'hi2all2013',
-        userSearchBase: 'ou=sistemas,ou=usuarios,dc=pop-pa,dc=rnp,dc=br',
-        usernameAttribute: 'uid',
+        adminDn: process.env.LDAP_ADMIN_DN,
+        adminPassword: process.env.LDAP_ADMIN_PASSWORD,
+        userSearchBase: process.env.LDAP_USER_SEARCH_BASE,
+        usernameAttribute: process.env.LDAP_USERNAME_ATTRIBUTE,
         username: username,
         userPassword: password,
     }
@@ -259,8 +259,8 @@ export async function appRoutes(app: FastifyInstance) {
 
                 user: {
                     id: 3,
-                    name: 'eduardo.castro',
-                    email: 'eduardo.castro@pop-pa.rnp.br'
+                    name: 'teste',
+                    email: 'teste'
                 } 
             })
         }
@@ -291,7 +291,7 @@ export async function appRoutes(app: FastifyInstance) {
         else {
             const token = process.env.JWT_SECRET //createToken({ payload: "teste" })
 
-            console.log(user)
+            //console.log(user)
 
             return reply.send({
                 status: 500,
