@@ -3,11 +3,32 @@ import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import consultHost  from '../scripts/consult-host.js'
 import dayjs from 'dayjs';
+import { authenticate } from 'ldap-authentication'
+import { createSigner } from 'fast-jwt'
+
+const createToken = createSigner({ key: process.env.JWT_SECRET })
+const verifyToken = createSigner({ key: (callback: any) => callback(null, process.env.JWT_SECRET)})
 
 const prisma = new PrismaClient()
 
+const auth = (username: string, password: string) => {
+
+    const options = {
+        ldapOpts: {
+            url: "ldap://arabica.pop-pa.rnp.br"// process.env.LDAP_ENDPOINT
+        },
+        adminDn: 'uid=nagiosadmin,ou=sistemas,ou=usuarios,dc=pop-pa,dc=rnp,dc=br',
+        adminPassword: 'hi2all2013',
+        userSearchBase: 'ou=sistemas,ou=usuarios,dc=pop-pa,dc=rnp,dc=br',
+        usernameAttribute: 'uid',
+        username: username,
+        userPassword: password,
+    }
+
+    return options
+}
+
 export async function appRoutes(app: FastifyInstance) {
-    
     const hour = dayjs().subtract(3, 'hour').toDate()
 
     async function monitorar(){
@@ -206,7 +227,6 @@ export async function appRoutes(app: FastifyInstance) {
         return checkOk
     })
 
-
     /* Consulta */
     app.get('/consultar/:ip', async (req) => {
         const createIpBody = z.object({
@@ -220,6 +240,72 @@ export async function appRoutes(app: FastifyInstance) {
         return consulta
     })
 
+    app.post('/validate', async (req) => {
+        const createDataBody = z.object({
+            token: z.string()
+        })
+
+        const { token } = createDataBody.parse(req.body)
+
+        // verificar o token
+        //console.log(`Token do FRONTEND: ${token}`)
+
+        // se existe:
+        if ( token == process.env.JWT_SECRET ){
+
+
+            console.log("passou")
+            return({ 
+
+                user: {
+                    id: 3,
+                    name: 'eduardo.castro',
+                    email: 'eduardo.castro@pop-pa.rnp.br'
+                } 
+            })
+        }
+        
+        // senão :
+        console.log('token inválido')
+        return('token inválido')
+    })
+
+    app.post('/signin', async (req, reply) => {
+        const createDataBody = z.object({
+            username: z.string(),
+            password: z.string(),
+        })
+
+        const { username, password } = createDataBody.parse(req.body)
+
+        // Verifica se o usuario existe
+        const user = await authenticate(auth(username, password))
+    
+
+        if (!user) {
+            return reply.send({
+                status: 404,
+                data: "User Not Found"
+            })
+        }
+        else {
+            const token = process.env.JWT_SECRET //createToken({ payload: "teste" })
+
+            console.log(user)
+
+            return reply.send({
+                status: 500,
+                user: { 
+                    id: user.uidNumber,
+                    name: user.cn,
+                    email: user.mail
+                },
+                token: token
+            })
+        }
+    })
+
+    app.post('/logout', async () => (true))
 
     // TODO: change the request information in invesao page
     app.get('/consultar/:name/:ip', async (req) => {

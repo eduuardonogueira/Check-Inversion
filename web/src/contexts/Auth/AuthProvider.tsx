@@ -20,8 +20,8 @@ export const AuthProvider = ({ children }: { children: JSX.Element}) => {
         validateToken();
     }, []);
 
-    const signin = async (user: string, password: string) => {
-        const data = await api.signin(user, password);
+    const signin = async (username: string, password: string) => {
+        const data = await api.signin(username, password);
         if(data.user && data.token) {
             setUser(data.user);
             setToken(data.token); // salvando o token no localStorage

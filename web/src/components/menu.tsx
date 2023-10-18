@@ -55,14 +55,13 @@ export function Menu ({ active }:{active: string}) {
                     <div className='flex flex-col relative'>
                         <div 
                             className="flex items-center gap-x-1 p-2 text-[#9E9EAC] hover:text-[#548FE7] cursor-pointer text-sm font-bold z-10"
-                            onMouseEnter={() => setUserMenu("")}
-                            
+                            onMouseEnter={() => setUserMenu("")}    
                         >
                             <User size={24}/>
                             <p>{auth.user?.name}</p>
                         </div>
 
-                        <ul className={`flex absolute flex-col w-full pt-10 bg-gray-950 ${userMenu}`}
+                        <ul className={`flex absolute w-full flex-col pt-10 bg-gray-950 ${userMenu}`}
                             onMouseLeave={() => setTimeout(()=> {
                                 setUserMenu("hidden")
                             }, 1000)}
