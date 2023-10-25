@@ -8,7 +8,7 @@ dotenv.config()
 const app = Fastify()
 
 app.register(cors)
-app.register(appRoutes)
+app.register(appRoutes, {prefix: '/api'})
 
 const portString: string | undefined = process.env.BACKEND_PORT 
 const port = parseInt(portString == undefined ? '': portString )
