@@ -3,6 +3,7 @@ import { Input, Button } from '../../components'
 import { FormEvent, useContext, useState } from 'react';
 import { AuthContext } from '../../contexts/Auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { Key, User } from '@phosphor-icons/react';
 
 export const Login = () => {
 
@@ -26,49 +27,61 @@ export const Login = () => {
         }
     }
 
+    console.log("teste")
+
 
     return ( 
-        <main className="absolute h-full flex items-center w-full">
-            <section className='relative top flex flex-col w-full'>
-                <div className='flex flex-col gap-3'>
-                    <h1 className="m-auto w-[25%]">
-                        <img src={logo} alt="logo"/>
-                    </h1>
-                    <h2 className="text-[#E1E1E6] text-center text-3xl font-bold mt-6">Check-Inversion PoP-PA</h2>
-                    <p className="text-[#7C7C8A] text-lg text-center mb-14 mt-2">Faça Login</p>
+        <main className="h-screen w-screen absolute flex items-center justify-center">
+            <section className='flex flex-col bg-[#202024] gap-8 max-w-[500px] relative p-6 rounded-md w-full'>
+                <div className='flex flex-col items-center gap-4 w-full'>
+                    <h1 className='w-[250px]'><img src={logo} alt="logo do pop-pa" /></h1>
+                    <h2 className='text-3xl font-bold text-[#E1E1E6]'>Check-Inversion PoP-PA</h2>
+                    <p className='text-[#7C7C8A] font-medium'>Faça login para acessar o conteúdo</p>
                 </div>
+
                 <form 
                     method='post'
-                    className="flex flex-col w-[40%] m-auto"
+                    className="flex flex-col w-full"
                     onSubmit={handleLogin}
                 >
                     <label htmlFor="usuario" className="text-[#E1E1E6] mb-3">Seu usuário:</label>
-                    <Input
-                        style={{marginBottom: "16px"}}
-                        name="usuario"
-                        type="text"
-                        placeholder="Usuário"
-                        value={username}
-                        onchange={ e => setUsername(e.target.value)}
-                    ></Input>
+                    <div className='relative w-full'>
+                        <Input
+                            classname="w-full mb-4 "
+                            icon={true}
+                            name="usuario"
+                            type="text"
+                            placeholder="Usuário"
+                            value={username}
+                            onchange={ e => setUsername(e.target.value)}
+                        ></Input>
+                        <User size={20} className='absolute text-[#c0c0d3] top-4 left-6'/>
+                    </div>
+
                     <label htmlFor="senha" className="text-[#E1E1E6] mb-3">Sua senha:</label>
-                    <Input
-                        style={{marginBottom: "16px"}}
-                        name="senha"
-                        type="password"
-                        placeholder="Senha"
-                        value={password}
-                        onchange={ e => setPassword(e.target.value)}
-                    ></Input>
-                    <a href="" className="text-[#7C7C8A] underline">Esqueceu sua senha?</a>
+                    <div className='relative w-full'>
+                        <Input
+                            classname="w-full mb-4"
+                            icon={true}
+                            name="senha"
+                            type="password"
+                            placeholder="Senha"
+                            value={password}
+                            onchange={ e => setPassword(e.target.value)}
+                        ></Input>
+                        <Key size={20} className='absolute text-[#c0c0d3] top-4 left-6'/>
+                    </div>
+
+                    <div className='flex gap-2 text-[#7C7C8A]'>
+                        <input type='checkbox'></input>
+                        <p>Salvar meu login</p>
+                    </div>
                     <Button 
                         type="submit"
                         text="Acessar"
                         style={{marginTop: "16px"}}
                     />
                 </form>
-                <p className="text-[#7C7C8A] text-center mt-4">Ou</p>
-                <a href="" className="text-[#7C7C8A] underline text-center mt-4">Criar conta</a>
             </section>
         </main>
     );
