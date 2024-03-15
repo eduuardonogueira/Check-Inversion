@@ -6,34 +6,35 @@ import { useState } from 'react'
 import { UpTime } from './UpTime'
 
 export const Consultar = () => {
-    const [ page, setPage ] = useState<string | any>(< Inversao />)
+  const [page, setPage] = useState<string | any>(<Inversao />)
 
-    const changeScript = (get: string | any) => {
+  const changeScript = (get: string | any) => {
+    setPage(get)
+  }
 
-        setPage(get)
-    }
-
-    return (
-        <>
-            < Menu active="consultar" />
-            <div className={`mx-8 mt-14 w-vw ${global.grid}`}>
-                < MenuLateral 
-                    title='Scripts'
-                    list={[{
-                        name: "inversão",
-                        icon: <Swap size={22}/>,
-                        get: < Inversao />
-                    },{
-                        name: "Tempo de atividade",
-                        icon: <WarningCircle size={22}/>,
-                        get: < UpTime />
-                    }]}
-                    changeList={changeScript}
-                />
-                < Painel />
-                {page}
-            </div>
-        </>
-    )
-
+  return (
+    <>
+      <Menu active="consultar" />
+      <div className={`mx-8 mt-14 w-vw ${global.grid}`}>
+        <MenuLateral
+          title="Scripts"
+          list={[
+            {
+              name: 'inversão',
+              icon: <Swap size={22} />,
+              get: <Inversao />
+            },
+            {
+              name: 'Tempo de atividade',
+              icon: <WarningCircle size={22} />,
+              get: <UpTime />
+            }
+          ]}
+          changeList={changeScript}
+        />
+        <Painel />
+        {page}
+      </div>
+    </>
+  )
 }
