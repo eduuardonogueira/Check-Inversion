@@ -1,115 +1,26 @@
-import { PrismaClient } from '@prisma/client'
 import { FastifyInstance } from 'fastify'
+import { PrismaClient } from '@prisma/client'
 import { z } from 'zod'
-import consultHost  from '../scripts/consult-host.js'
 import dayjs from 'dayjs';
+
 import { authenticate } from 'ldap-authentication'
 import { createSigner } from 'fast-jwt'
+import { AuthService } from '../controllers/user.controllers.js';
 
-const createToken = createSigner({ key: process.env.JWT_SECRET })
-const verifyToken = createSigner({ key: (callback: any) => callback(null, process.env.JWT_SECRET)})
+import consultHost  from '../../scripts/consult-host.js'
+import { checkQuery } from '../core/checkQuery.core.js';
+
+import { monitoring } from '../core/monitoring.core.js';
+
+//const createToken = createSigner({ key: process.env.JWT_SECRET })
+//const verifyToken = createSigner({ key: (callback: any) => callback(null, process.env.JWT_SECRET)})
 
 const prisma = new PrismaClient()
 
-const auth = (username: string, password: string) => {
+export const routes = async (app: FastifyInstance) => {
 
-    const options = {
-        ldapOpts: {
-            url: process.env.LDAP_ENDPOINT || ""
-        },
-        adminDn: process.env.LDAP_ADMIN_DN,
-        adminPassword: process.env.LDAP_ADMIN_PASSWORD,
-        userSearchBase: process.env.LDAP_USER_SEARCH_BASE,
-        usernameAttribute: process.env.LDAP_USERNAME_ATTRIBUTE,
-        username: username,
-        userPassword: password,
-    }
+    //monitoring()
 
-    return options
-}
-
-export async function appRoutes(app: FastifyInstance) {
-    const hour = dayjs().subtract(3, 'hour').toDate()
-
-    async function monitorar(){
-        function vef( value1: vefConsulta, value2: Consulta ){
-            if (value1.neighbor !== value2.neighbor && value1.port !== value2.port && value1.remotePort !== value2.remotePort) {
-                return 'Invertido'
-            }
-
-            return 'Ok'
-        }
-
-        const hostsDatabase = await prisma.host.findMany({
-            include: {
-                neighbors: true,
-            }
-        })
-
-        var host = 0
-
-        async function queryHost() {
-            const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]');
-            const hostQuery: Consulta[] = await consultHost(hostsDatabase[host].ip);
-            
-            var neighbor = 0;
-
-            function registrar() {
-                if ( neighbor < hostsDatabase[host].neighbors.length ) {
-                    const databaseNeighbor = hostsDatabase[host].neighbors[neighbor];
-                    const queryNeighbor = hostQuery[neighbor];
-                    const hostDown = queryNeighbor == null ? true : false
-
-                    setTimeout( async () => {
-                        await prisma.hostQuery.create({
-                            data: {
-                                host: { connect: { id: hostsDatabase[host].id } },
-                                neighbor: hostDown ? databaseNeighbor.neighbor : queryNeighbor.neighbor,
-                                port: hostDown ? databaseNeighbor.port : queryNeighbor.port,
-                                remotePort: hostDown ? databaseNeighbor.remotePort : queryNeighbor.remotePort,
-                                status: hostDown ? 'Down' : vef(databaseNeighbor, queryNeighbor) == 'Invertido' ? 'Invertido' : 'Ok',
-                                createdAt: hour
-                            }
-                        })
-
-                        neighbor ++
-                        setImmediate(registrar)
-                    }, 500 )
-                }   
-            }
-
-            registrar()
-            
-            setTimeout(() => {
-                if ( host < hostsDatabase.length - 1) {
-                    host ++
-                    setImmediate(queryHost)
-                }
-            }, 10000)
-        }
-            
-        hostsDatabase.length == 0 ? '' : queryHost()
-
-        setTimeout(monitorar, 30 * 60 * 1000)
-    }
-
-    monitorar()
-
-    function vefConsulta( value : bc[]) {
-        value.map( host => (host.HostQueries.length == 0) ? host.HostQueries = ([{
-            neighbor: 'consultando',
-            port: 'consultando',
-            remotePort: 'consultando',
-            status: 'consultando',
-            createdAt: hour, 
-            id: '',
-            hostId: ''
-        }]): '' ) 
-
-        return value
-    }
-
-    /* Rotas */
     app.get('/', async (req, res) => {
         return 'teste de carregamento'
     })
@@ -128,7 +39,7 @@ export async function appRoutes(app: FastifyInstance) {
         const hour = dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
         const LastThirty = dayjs().subtract(30, 'minutes').format('YYYY-MM-DDTHH:mm:ss.SSS'+'[Z]')
         const hosts = await prisma.host.findMany()
-        const todos = []
+        const allHosts = []
 
         for(const host of hosts) {
             const neighborsCount = await prisma.neighbor.count({
@@ -137,7 +48,7 @@ export async function appRoutes(app: FastifyInstance) {
                 }
             })
 
-            const HostQueries = await prisma.hostQuery.findMany({
+            const NeighborQueries = await prisma.neighborQuery.findMany({
                 where: {
                     hostId: host.id,
                     createdAt: {
@@ -151,11 +62,11 @@ export async function appRoutes(app: FastifyInstance) {
                 take: neighborsCount
             })
 
-            todos.push({hostname: host.hostname, HostQueries: HostQueries})
-            vefConsulta(todos)
+            allHosts.push({hostname: host.hostname, NeighborQueries: NeighborQueries})
+            checkQuery(allHosts)
         }
 
-        return todos
+        return allHosts
     })
 
     app.get('/invertidos', async (req, res) => {
@@ -171,7 +82,7 @@ export async function appRoutes(app: FastifyInstance) {
                 }
             })
 
-            const HostQueries = await prisma.hostQuery.findMany({
+            const NeighborQueries = await prisma.neighborQuery.findMany({
                 where: {
                     hostId: host.id,
                     status: 'Invertido',
@@ -186,7 +97,7 @@ export async function appRoutes(app: FastifyInstance) {
                 take: neighborsCount
             })
 
-            HostQueries.length == 0 ? '' : invertidos.push({hostname: host.hostname, HostQueries: HostQueries})
+            NeighborQueries.length == 0 ? '' : invertidos.push({hostname: host.hostname, NeighborQueries: NeighborQueries})
         }
 
         return invertidos
@@ -205,7 +116,7 @@ export async function appRoutes(app: FastifyInstance) {
                 }
             })
 
-            const HostQueries = await prisma.hostQuery.findMany({
+            const NeighborQueries = await prisma.neighborQuery.findMany({
                 where: {
                     hostId: host.id,
                     status: 'Ok',
@@ -220,8 +131,8 @@ export async function appRoutes(app: FastifyInstance) {
                 take: neighborsCount
             })
 
-            checkOk.push({hostname: host.hostname, HostQueries: HostQueries})
-            vefConsulta(checkOk)
+            checkOk.push({hostname: host.hostname, NeighborQueries: NeighborQueries})
+            checkQuery(checkOk)
         }
 
         return checkOk
@@ -278,20 +189,15 @@ export async function appRoutes(app: FastifyInstance) {
 
         const { username, password } = createDataBody.parse(req.body)
 
-        // Verifica se o usuario existe
-        const user = await authenticate(auth(username, password))
-    
-
+        const user = await AuthService(username, password)
+        
         if (!user) {
             return reply.send({
                 status: 404,
                 data: "User Not Found"
-            })
-        }
-        else {
+            }) 
+        } else {
             const token = process.env.JWT_SECRET //createToken({ payload: "teste" })
-
-            //console.log(user)
 
             return reply.send({
                 status: 500,
@@ -307,7 +213,7 @@ export async function appRoutes(app: FastifyInstance) {
 
     app.post('/logout', async () => (true))
 
-    // TODO: change the request information in invesao page
+    // TODO: change the request information in inversion page
     app.get('/consultar/:name/:ip', async (req) => {
         const createDataBody = z.object({
             name: z.string(),
@@ -323,7 +229,7 @@ export async function appRoutes(app: FastifyInstance) {
             include: {
                 neighbors: {
                     where: {
-                        neighbor: name
+                        hostname: name
                     }
                 }
             }
@@ -352,16 +258,16 @@ export async function appRoutes(app: FastifyInstance) {
                     updatedAt: horaAtual,
                     neighbors: { 
                         create: neighbors.map((item: any) => ({
-                            neighbor: item.neighbor,
+                            hostname: item.neighbor,
                             port: item.port,
                             remotePort: item.remotePort,
                             createdAt: horaAtual,
                             updatedAt: horaAtual
                         }))
                     },
-                    HostQueries: {
+                    neighborsQueries: {
                         create: neighbors.map((item: any) => ({
-                            neighbor: item.neighbor,
+                            hostname: item.neighbor,
                             port: item.port,
                             remotePort: item.remotePort,
                             status: 'Ok',
@@ -373,42 +279,15 @@ export async function appRoutes(app: FastifyInstance) {
 
             return 'Host Registrado'
         } catch(erro) {
-            return `Erro ao registrar Host \n Erro: ${erro} `
-        }
+            //return `Erro ao registrar Host \n Erro: ${erro} `
+            console.log(erro)
+            return "Erro ao registrar o Host \n Por favor, tente contato com o Administrador da aplicação"
+        }   
         
     })
 
 
     /* Types */
-    type bc = {
-        hostname: string,
-        HostQueries: {
-            neighbor: string,
-            port: string,
-            remotePort: string,
-            status: string,
-            createdAt: Date, 
-            id: string,
-            hostId: string
-        }[],
-    }
-
-    type Consulta = {
-        hostname: string,
-        neighbor: string,
-        ip: string,
-        port: string,
-        remotePort: string,
-        status: string,
-        createdAt: string
-    }
-
-    type vefConsulta = {
-        neighbor: string
-        port: string,
-        remotePort: string,
-        createdAt: Date
-    }
 
 }
 

@@ -7,18 +7,19 @@ function consultUpTime(ipHost) {
     const communityHost = process.env.COMMUNITY_HOST;
     var result = new Object;
     var cont = 0;
-
+    
     var session = snmp.createSession(ipHost, communityHost);
 
-    if (ipHost.startsWith('200') == true){
-        var oid = "1.3.6.1.4.1.2636.3.35.1.1.1.3"
+    /* if (ipHost.startsWith('200') == true){
+        //var oid = "1.3.6.1.4.1.2636.3.35.1.1.1.3"
+    
+        var oid = "1.3.6.1.2.1.1";
     }else{
         var oid = "1.3.6.1.2.1.1";
-    }
 
-    console.log(oid)
-
-    //var oid = "1.3.6.1.2.1.1";
+    } */
+    
+    var oid = "1.3.6.1.2.1.1";
 
     function doneCb (error) {
         if (error)
@@ -44,6 +45,7 @@ function consultUpTime(ipHost) {
                         break
                     case 2:
                         result.upTime = dayjs().subtract(valor*0.01, 'second').format('DD/MM/YYYY HH:mm:ss')
+                        console.log(valor*0.01/60/60)
                         break
                     case 3:
                         result.contact = valor.toString()
@@ -70,7 +72,7 @@ function consultUpTime(ipHost) {
 
 }
 
-consultUpTime("172.16.8.1");
+consultUpTime("200.18.80.186");
 
 module.exports = consultUpTime;
 

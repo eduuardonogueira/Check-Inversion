@@ -87,7 +87,15 @@ export function Menu ({ active }:{active: string}) {
                         {/*TODO: when you change the input focus, hide the search */}
 
                         <ul className='absolute top-14 flex w-full flex-col'>
-                            {hostsFilter.map((item, index) => (
+                            { hostsFilter.length == 0 && search.length > 0 
+                            ?   
+                                <li 
+                                    className='rounded-sm bg-[#fff] p-2 text-center' 
+                                > 
+                                    <p>Sem resultados</p>
+                                </li> 
+                            
+                            : hostsFilter.map((item, index) => (
                                 <li 
                                     className='rounded-sm bg-[#fff] p-2' 
                                     key={index}

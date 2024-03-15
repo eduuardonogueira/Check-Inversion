@@ -22,13 +22,16 @@ export const Login = () => {
             if(isLogged) {
                 navigate('/');
             }else{
-                alert("usuário ou senha incorretos")
+                alert("Usuário ou Senha Incorretos");
+                setPassword('');
+                setUsername('');
             }
+        } else {
+            alert("Por favor, preencha todos os campos!")
+            setPassword('');
+            setUsername('');
         }
     }
-
-    console.log("teste")
-
 
     return ( 
         <main className="h-screen w-screen absolute flex items-center justify-center">
@@ -44,38 +47,41 @@ export const Login = () => {
                     className="flex flex-col w-full"
                     onSubmit={handleLogin}
                 >
-                    <label htmlFor="usuario" className="text-[#E1E1E6] mb-3">Seu usuário:</label>
-                    <div className='relative w-full'>
+                    <label htmlFor="usuario" className="flex flex-col gap-2 text-[#E1E1E6] mb-3 relative">
+                        <span className='font-medium'>Seu usuário:</span>
+                        
                         <Input
-                            classname="w-full mb-4 "
+                            classname="w-full mb-4"
                             icon={true}
                             name="usuario"
                             type="text"
                             placeholder="Usuário"
                             value={username}
                             onchange={ e => setUsername(e.target.value)}
-                        ></Input>
-                        <User size={20} className='absolute text-[#c0c0d3] top-4 left-6'/>
-                    </div>
+                        />
+                        <User size={20} className='absolute text-[#c0c0d3] top-12 left-6'/>
+                    </label>
 
-                    <label htmlFor="senha" className="text-[#E1E1E6] mb-3">Sua senha:</label>
-                    <div className='relative w-full'>
+                    <label htmlFor="senha" className="flex flex-col gap-2 text-[#E1E1E6] mb-3 relative w-full">
+                        <span className='font-medium'>Sua senha:</span>
+
                         <Input
-                            classname="w-full mb-4"
+                            classname="w-full"
                             icon={true}
                             name="senha"
                             type="password"
                             placeholder="Senha"
                             value={password}
                             onchange={ e => setPassword(e.target.value)}
-                        ></Input>
-                        <Key size={20} className='absolute text-[#c0c0d3] top-4 left-6'/>
-                    </div>
+                        />
+                        <Key size={20} className='absolute text-[#c0c0d3] top-12 left-6'/>
+                    </label>
 
-                    <div className='flex gap-2 text-[#7C7C8A]'>
-                        <input type='checkbox'></input>
-                        <p>Salvar meu login</p>
-                    </div>
+                    <label className='flex gap-2 text-[#7C7C8A] my-3'>
+                        <input type='checkbox' className="checked:"></input>
+                        <span>Salvar meu login</span>
+                    </label>
+
                     <Button 
                         type="submit"
                         text="Acessar"

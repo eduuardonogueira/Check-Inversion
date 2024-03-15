@@ -3,18 +3,17 @@ import { useState } from "react"
 interface Objeto {
     name: string,
     icon: JSX.Element,
-    get?: string
+    get?: string | JSX.Element
 }
 
 interface IMenuLateral {
     title: string,
     list: Objeto[],
-    changeList?: (get: string) => void | undefined
+    changeList?: (get: string | any) => void | undefined
 }
 
-
 export function MenuLateral({ title, list, changeList }: IMenuLateral): JSX.Element {
-    function setList(list: string) {
+    function setList(list: string | any) {
         changeList !== undefined && changeList(list)
     }
 
@@ -28,17 +27,12 @@ export function MenuLateral({ title, list, changeList }: IMenuLateral): JSX.Elem
         var newActive = [...active]
 
         newActive[index] == 'transparent' && (newActive.fill('transparent'),  newActive[index] = '#044FBF')
-
-        /* if (newActive[index] == 'transparent'){
-            newActive.fill('transparent')
-            newActive[index] = '#044FBF'
-        } */
         
         setActive(newActive)
     }
 
     return (
-        <nav className=' flex flex-col bg-[#1C1C20] w-[148px] gap-8 h-[calc(100vh-156px)] p-3' >
+        <nav className='flex flex-col bg-[#1C1C20] w-[148px] gap-8 h-[calc(100vh-156px)] p-3'>
             <h1 className='text-white w-full p-1 bg-[#121214] text-base font-bold text-center'>{title}</h1>
             <ul className='flex flex-col w-full gap-2'>
                 {list.map((item, index ) => (

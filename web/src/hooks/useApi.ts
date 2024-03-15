@@ -10,7 +10,6 @@ export const useApi = () => ({
             user: { id: 3, name: 'Eduardo', email: 'eduardocastroemp@gmail.com' }
         } // usado somente para testes */
         const response = await api.post('/validate', { token });
-        console.log('validou')
         return response.data
     },
     signin: async (username: string, password: string) => {

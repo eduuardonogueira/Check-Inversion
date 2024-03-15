@@ -25,7 +25,11 @@ export const Verificar = () => {
         if(ip.length ==0)
             return
 
-        await api.post('/consultar', { ip }).then(response => (
+        await api.get('/consultar/', { 
+            params: {
+                ip 
+            }
+        }).then(response => (
             typeof(response.data) == 'string' ? setVerificar( consultaAntiga => [...consultaAntiga, consultaAntiga[0].erro = response.data]) : 
             setVerificar(response.data)
         ))

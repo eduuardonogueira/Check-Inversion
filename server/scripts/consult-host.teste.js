@@ -145,12 +145,15 @@ function consultHost(ipHost) {
                 }
                 setTimeout(() => {   
                     consulta.length == 0 ? '' : resolve(consulta); 
+                    console.log(consulta);
                 }, 50);
             },50)
         }, 50);
     },2000)
 })
 }
+
+consultHost('172.16.8.2')
 
 module.exports = consultHost;
 

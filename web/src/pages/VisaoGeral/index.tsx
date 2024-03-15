@@ -14,8 +14,8 @@ export const VisaoGeral = () => {
     type QueryHost = {
         hostname: string,
         ip: string,
-        HostQueries: { 
-            neighbor: string,
+        NeighborQueries: { 
+            hostname: string,
             port: string,
             remotePort: string,
             status: string,
@@ -25,16 +25,16 @@ export const VisaoGeral = () => {
     }
 
     const [ queryHosts, setQueryHosts ] = useState<QueryHost[]>([])
-    const [ request, setRequest ] = useState('/todos')
+    const [ request, setRequest ] = useState<string>('/todos')
     const formatarData = (data:string) => moment.utc(data).utcOffset(0).format('HH:mm:ss DD-MM-YYYY');
 
 
-    function changeList(get: string) {
+    const changeList = (get: string) => {
         setRequest(get)
     }
 
     useEffect(()=> {
-        api.get(request).then((response:any) => {setQueryHosts(response.data)})
+        api.get(request).then((response) => {setQueryHosts(response.data), console.log(response.data)})
     }, [request])
 
     return (
@@ -91,27 +91,26 @@ export const VisaoGeral = () => {
                     <article className={`overflow-auto h-[calc(100vh-297px)]`}>
                         { queryHosts.map((host, index) => (
                             <ul key={index} className={style.host}>
-                                { host.HostQueries.length == 0 ? '' : 
-                                    <li className={`${style.hostname} ${host.HostQueries.find((vizinho) => vizinho.status !== 'Ok' ) ? style.hostInvertido : '' }`} >
+                                { host.NeighborQueries.length == 0 ? '' : 
+                                    <li className={`${style.hostname} ${host.NeighborQueries.find((vizinho) => vizinho.status !== 'Ok' ) ? style.hostInvertido : '' }`} >
                                         { host.hostname }
                                     </li>
                                 }
                                 <li>
                                 { 
-                                    host.HostQueries.map((query, index) => (
+                                    host.NeighborQueries.map((neighbor, index) => (
                                         <ul key={index}>
-                                            <div className={`${style.enlace} ${ query.status !== 'Ok' ? style.invertido : '' }`}>
-                                                <li>{query.neighbor}</li>
-                                                <li>{query.port}</li>
-                                                <li>{query.remotePort}</li>
-                                                <li>{formatarData(query.createdAt)}</li>
-                                                <li>{query.status}</li>
+                                            <div className={`${style.enlace} ${ neighbor.status !== 'Ok' ? style.invertido : '' }`}>
+                                                <li>{neighbor.hostname}</li>
+                                                <li>{neighbor.port}</li>
+                                                <li>{neighbor.remotePort}</li>
+                                                <li>{formatarData(neighbor.createdAt)}</li>
+                                                <li>{neighbor.status}</li>
                                             </div>
                                         </ul>
                                     ))
                                 }
                                 </li>
-                                
                             </ul>
                         ))}
                         { queryHosts.length == 0 ?  <span className={style.aviso}> Nenhuma inversão na rede </span> : <span>{ queryHosts.length }</span> }
