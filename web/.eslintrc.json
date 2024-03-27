@@ -6,30 +6,23 @@
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
-    "plugin:react-hooks/recommended",
-    "plugin:import/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
     "prettier",
-    "plugin:css/recommended",
-    "eslint-config-prettier"
+    "plugin:css/recommended"
   ],
+  "overrides": [],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaVersion": "latest"
+    "ecmaVersion": "latest",
+    "sourceType": "module"
   },
   "settings": {
     "react": {
       "version": "detect"
-    },
-    "import/resolver": {
-      "node": {
-        "paths": ["src"],
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
-      }
     }
   },
-  "plugins": ["react", "@typescript-eslint", "prettier", "unused-imports", "css"],
+  "plugins": ["react", "@typescript-eslint", "prettier", "unused-imports", "css", "simple-import-sort", "import"],
   "rules": {
     "react/prefer-stateless-function": "error",
     "react/no-unused-prop-types": "error",
@@ -131,6 +124,11 @@
         "args": "after-used",
         "argsIgnorePattern": "^_"
       }
-    ]
+    ],
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "import/first": "error",
+    "import/newline-after-import": "error",
+    "import/no-duplicates": "error"
   }
 }

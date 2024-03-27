@@ -166,16 +166,16 @@ export const routes = async (app: FastifyInstance) => {
 
 
             console.log("passou")
-            return({ 
+            return({
 
                 user: {
                     id: 3,
                     name: 'teste',
                     email: 'teste'
-                } 
+                }
             })
         }
-        
+
         // senão :
         console.log('token inválido')
         return('token inválido')
@@ -190,18 +190,18 @@ export const routes = async (app: FastifyInstance) => {
         const { username, password } = createDataBody.parse(req.body)
 
         const user = await AuthService(username, password)
-        
+
         if (!user) {
             return reply.send({
                 status: 404,
                 data: "User Not Found"
-            }) 
+            })
         } else {
             const token = process.env.JWT_SECRET //createToken({ payload: "teste" })
 
             return reply.send({
                 status: 500,
-                user: { 
+                user: {
                     id: user.uidNumber,
                     name: user.cn,
                     email: user.mail
@@ -256,7 +256,7 @@ export const routes = async (app: FastifyInstance) => {
                     hostname: neighbors[0].hostname,
                     createdAt: horaAtual,
                     updatedAt: horaAtual,
-                    neighbors: { 
+                    neighbors: {
                         create: neighbors.map((item: any) => ({
                             hostname: item.neighbor,
                             port: item.port,
@@ -282,13 +282,11 @@ export const routes = async (app: FastifyInstance) => {
             //return `Erro ao registrar Host \n Erro: ${erro} `
             console.log(erro)
             return "Erro ao registrar o Host \n Por favor, tente contato com o Administrador da aplicação"
-        }   
-        
+        }
+
     })
 
 
     /* Types */
 
 }
-
-

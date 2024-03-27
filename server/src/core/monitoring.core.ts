@@ -36,7 +36,7 @@ export const monitoring = async() => {
 
 
         if (value1.hostname !== value2.neighbor || value1.port !== value2.port || value1.remotePort !== value2.remotePort) {
-            return 'Invertido' 
+            return 'Invertido'
         } else {
             return 'Ok'
         }
@@ -77,11 +77,11 @@ export const monitoring = async() => {
                     const neighborDB = hostsDB[host].neighbors[link];
 
                     var findLink = hostQuery.find((neighbor) => ( neighbor.port == neighborDB.port && neighbor ))
-    
+
                     if (findLink) {
                         // link encontrado
                         const status = compareLink(neighborDB, findLink)
-    
+
                         register({
                             hostname: findLink.neighbor,
                             port: findLink.port,
@@ -96,11 +96,11 @@ export const monitoring = async() => {
                     link ++
                     setImmediate(checkLink)
                 }, 1000 )
-            }   
+            }
         }
 
         checkLink()
-        
+
         setTimeout(() => {
             if ( host < hostsDB.length - 1) {
                 host ++
@@ -108,7 +108,7 @@ export const monitoring = async() => {
             }
         }, 10000)
     }
-        
+
     hostsDB.length == 0 ? '' : queryHost()
 
     setTimeout(monitoring, 30 * 60 * 1000)

@@ -14,5 +14,8 @@
     "concurrently": "^8.2.0",
     "dotenv": "^16.3.1",
     "start": "^5.1.0"
+  },
+  "devDependencies": {
+    "vite-tsconfig-paths": "^4.3.2"
   }
 }

@@ -13,8 +13,8 @@ var banco = [
                         ip: '172.16.8.2',
                         hostname: 'ITV',
                         port: '27',
-                        neighbor: 'CPRM-1',       
-                        remotePort: '1:24'        
+                        neighbor: 'CPRM-1',
+                        remotePort: '1:24'
                     },
                     {
                         ip: '172.16.8.2',
@@ -42,7 +42,6 @@ function checkLink() {
                 console.log(findLink)
 
             } else {
-                
                 console.log("link não encontrado")
             }
 
