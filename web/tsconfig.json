@@ -1,6 +1,9 @@
 {
+  "include": ["vite.config.cts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.ts"],
   "compilerOptions": {
+    "noImplicitAny": true,
     "target": "ESNext",
+    "types": ["vite/client", "node"],
     "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowJs": false,
@@ -12,11 +15,22 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "resolveJsonModule": true,
-    "isolatedModules": true,
+    "isolatedModules": false,
     "noEmit": true,
     "jsx": "react-jsx",
-    "plugins": [{"name": "typescript-plugin-css-modules"}]
+    "baseUrl": ".",
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
+    "paths": {
+      "@assets/*": ["./src/assets/*"],
+      "@components/*": ["./src/components/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@constants/*": ["./src/constants/*"],
+      "@contexts/*": ["./src/contexts/*"],
+      "@icons/*": ["./src/assets/icons/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@styles/*": ["./src/styles/*"],
+      "@customtypes/*": ["./src/types/*"]
+    }
   },
-  "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

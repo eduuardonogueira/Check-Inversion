@@ -1,9 +1,21 @@
 {
+  "authors": [
+    {
+      "name": "Eduardo Nogueira",
+      "email": "eduardocastroemp@gmail.com",
+      "url": "https://github.com/eduuardonogueira"
+    }
+  ],
   "scripts": {
-    "start": " concurrently \"cd server && npm run server\"  \"cd web && npm run web\" "
+    "start": " concurrently \"cd server && npm run server\"  \"cd web && npm run web\" ",
+    "dev": " concurrently \"cd server && npm run server\"  \"cd web && npm run dev\" "
   },
   "dependencies": {
     "concurrently": "^8.2.0",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "start": "^5.1.0"
+  },
+  "devDependencies": {
+    "vite-tsconfig-paths": "^4.3.2"
   }
 }

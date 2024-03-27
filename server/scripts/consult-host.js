@@ -152,7 +152,6 @@ function consultHost(ipHost) {
 })
 }
 
-
 module.exports = consultHost;
 
 /* 

@@ -15,14 +15,14 @@ model Host {
   ip String @unique 
   hostname String
   neighbors Neighbor[]
-  HostQueries HostQuery[]
+  neighborsQueries NeighborQuery[]
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 }
 
 model Neighbor {
   id String @id @default(uuid())
-  neighbor String
+  hostname String
   port String
   remotePort String
   updatedAt DateTime @updatedAt
@@ -31,9 +31,9 @@ model Neighbor {
   hostId String
 }
 
-model HostQuery {
+model NeighborQuery {
   id String @id @default(uuid())
-  neighbor String
+  hostname String
   port String
   remotePort String
   status String

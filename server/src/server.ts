@@ -1,18 +1,15 @@
 import Fastify from 'fastify'
+import { routes } from './routes/routes'
 import cors from '@fastify/cors'
-import { appRoutes } from './routes'
 import dotenv from 'dotenv';
-
 dotenv.config()
 
 const app = Fastify()
 
 app.register(cors)
-app.register(appRoutes, {prefix: '/api'})
+app.register(routes, {prefix: '/api'})
 
-const portString: string | undefined = process.env.BACKEND_PORT 
-const port = parseInt(portString == undefined ? '': portString )
-
+const port = parseInt( !process.env.BACKEND_PORT ? '' : process.env.BACKEND_PORT )
 const host = process.env.BACKEND_HOST
 
 app.listen({

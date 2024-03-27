@@ -1,11 +1,9 @@
 import './styles/global.css'
-import AppRoutes from './routes'
 
+import RouterAllRoutes from './router'
 
-function App() {
-  return (
-    <AppRoutes />
-  )
+const App = () => {
+  return <RouterAllRoutes />
 }
 
 export default App

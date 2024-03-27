@@ -1,13 +1,14 @@
-import { useContext } from "react"
-import { AuthContext } from "./AuthContext"
-import { Login } from "../../pages";
+import { useContext } from 'react'
 
-export const RequireAuth = ({ children }: { children: JSX.Element}) => {
-    const auth = useContext(AuthContext);
+import { Login } from '../../pages'
+import { AuthContext } from './AuthContext'
 
-    if(!auth.user){
-        return <Login />
-    }
-    
-    return children
+export const RequireAuth = ({ children }: { children: JSX.Element }) => {
+  const auth = useContext(AuthContext)
+
+  if (!auth.user) {
+    return <Login />
+  }
+
+  return children
 }

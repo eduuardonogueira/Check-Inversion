@@ -1,0 +1,35 @@
+{
+  "workbench.colorCustomizations": {
+    "statusBar.background": "#f10050",
+    "statusBar.foreground": "#ffffff"
+  },
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.formatDocument": "explicit"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnPaste": true,
+  "css.lint.validProperties": ["composes"],
+  "scss.lint.validProperties": ["composes"],
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.trimTrailingWhitespace": true,
+  "search.exclude": {
+    ".log": true,
+    ".cache": true,
+    "dist": true,
+    "public": true,
+    "**/node_modules": true
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+    "editor.formatOnSave": true
+  },
+  "[css]": {
+    "editor.formatOnSave": true
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  }
+}

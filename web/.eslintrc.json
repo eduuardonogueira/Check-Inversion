@@ -1,0 +1,134 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+    "prettier",
+    "plugin:css/recommended"
+  ],
+  "overrides": [],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "plugins": ["react", "@typescript-eslint", "prettier", "unused-imports", "css", "simple-import-sort", "import"],
+  "rules": {
+    "react/prefer-stateless-function": "error",
+    "react/no-unused-prop-types": "error",
+    "react/jsx-pascal-case": "error",
+    "react/jsx-no-script-url": "error",
+    "react/no-danger": "error",
+    "react/no-danger-with-children": "error",
+    "react/no-unstable-nested-components": [
+      "error",
+      {
+        "allowAsProps": true
+      }
+    ],
+    "react/jsx-fragments": "error",
+    "react/destructuring-assignment": [
+      "error",
+      "always",
+      {
+        "destructureInSignature": "always"
+      }
+    ],
+    "react/jsx-no-leaked-render": [
+      "error",
+      {
+        "validStrategies": ["ternary"]
+      }
+    ],
+    "react/jsx-max-depth": [
+      "error",
+      {
+        "max": 5
+      }
+    ],
+    "react/function-component-definition": [
+      "warn",
+      {
+        "namedComponents": "arrow-function"
+      }
+    ],
+    "react/jsx-key": [
+      "error",
+      {
+        "checkFragmentShorthand": true,
+        "checkKeyMustBeforeSpread": true,
+        "warnOnDuplicates": true
+      }
+    ],
+    "react/jsx-no-useless-fragment": "warn",
+    "react/jsx-curly-brace-presence": "warn",
+    "react/no-typos": "warn",
+    "react/display-name": "warn",
+    "react/self-closing-comp": "warn",
+    "react/jsx-sort-props": "warn",
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-one-expression-per-line": "off",
+    "react/prop-types": "off",
+    "prettier/prettier": "error",
+    "quotes": ["error", "single"],
+    "semi": ["error", "never"],
+    "react/no-deprecated": "error",
+    "react/button-has-type": "error",
+    "react/jsx-boolean-value": 2,
+    "react/jsx-closing-bracket-location": [1, "line-aligned"],
+    "react/jsx-uses-react": ["error"],
+    "react/no-children-prop": "error",
+    "react/jsx-props-no-spreading": ["warn"],
+    "react/no-unescaped-entities": ["off"],
+    "@typescript-eslint/no-unused-vars": ["off"],
+    "no-var": "error",
+    "no-unreachable": "error",
+    "no-use-before-define": "error",
+    "dot-notation": "error",
+    "no-empty": "error",
+    "prefer-const": "error",
+    "brace-style": [
+      "error",
+      "1tbs",
+      {
+        "allowSingleLine": true
+      }
+    ],
+    "no-multi-spaces": "error",
+    "space-in-parens": "error",
+    "space-infix-ops": "error",
+    "object-curly-spacing": ["error", "always"],
+    "max-len": [
+      "error",
+      {
+        "code": 150
+      }
+    ],
+    "jsx-quotes": ["error", "prefer-double"],
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "error",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "import/first": "error",
+    "import/newline-after-import": "error",
+    "import/no-duplicates": "error"
+  }
+}
