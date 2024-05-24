@@ -1,6 +1,9 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,36 +11,38 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-} 
+}
 
 model Host {
-  id String @id @default(uuid())
-  ip String @unique 
-  hostname String
+  id        String      @id @default(uuid())
+  ip        String      @unique
+  hostname  String      @db.VarChar(50)
   neighbors Neighbor[]
-  neighborsQueries NeighborQuery[]
-  updatedAt DateTime @updatedAt
-  createdAt DateTime @default(now())
+  queryLogs queryLogs[]
+  updatedAt DateTime    @updatedAt @map("updated_at") @db.Timestamp()
+  createdAt DateTime    @default(now()) @map("created_at") @db.Timestamp()
 }
 
 model Neighbor {
-  id String @id @default(uuid())
-  hostname String
-  port String
-  remotePort String
-  updatedAt DateTime @updatedAt
-  createdAt DateTime @default(now())
-  host Host? @relation(fields: [hostId], references: [id])
-  hostId String
+  id         String   @id @default(uuid())
+  hostname   String   @db.VarChar(50)
+  port       String   @db.VarChar(50)
+  remotePort String   @map("remote_port") @db.VarChar(10)
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamp()
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamp()
+  host       Host?    @relation(fields: [hostId], references: [id])
+  hostId     String   @map("host_id")
 }
 
-model NeighborQuery {
-  id String @id @default(uuid())
-  hostname String
-  port String
-  remotePort String
-  status String
-  createdAt DateTime @default(now())
-  host Host? @relation(fields: [hostId], references: [id])
-  hostId String
+model queryLogs {
+  id         String   @id @default(uuid())
+  hostname   String   @db.VarChar(50)
+  port       String   @db.VarChar(50)
+  remotePort String   @map("remote_port") @db.VarChar(10)
+  status     String   @db.VarChar(10)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamp()
+  host       Host?    @relation(fields: [hostId], references: [id])
+  hostId     String   @map("host_id")
+
+  @@map("query_logs")
 }
