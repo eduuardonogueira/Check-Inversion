@@ -1,0 +1,11 @@
+### teste
+GET http://localhost:3001/host/consult/172.16.99.253
+Content-Type: application/json
+
+### oie
+GET http://localhost:3001/host/consult/172.16.8.2
+Content-Type: application/json
+
+### tasdas
+GET http://localhost:3001/host/consult/200.18.81.198
+Content-Type: application/json

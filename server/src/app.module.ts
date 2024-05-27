@@ -7,6 +7,8 @@ import { HostsModule } from './modules/hosts/hosts.module';
 import { NeighborsModule } from './modules/neighbors/neighbors.module';
 import { QueryLogsModule } from './modules/query-logs/query-logs.module';
 import { PrismaService } from './modules/prisma/prisma.service';
+import { SnmpModule } from './modules/snmp/snmp.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -14,9 +16,11 @@ import { PrismaService } from './modules/prisma/prisma.service';
       envFilePath: `.env.${process.env.NODE_ENV}`,
       load: [configuration],
     }),
+    SnmpModule,
     HostsModule,
     NeighborsModule,
     QueryLogsModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
