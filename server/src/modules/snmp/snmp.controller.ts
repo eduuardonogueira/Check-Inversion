@@ -6,9 +6,19 @@ import { CustomRequestDto } from './dtos/custom-request.dto';
 export class SnmpController {
   constructor(private snmpService: SnmpService) {}
 
-  @Get('/:ip')
-  request(@Param('ip') ip: string) {
-    return this.snmpService.getHostInformation(ip);
+  @Get('/eaps/:ip')
+  eapsRequest(@Param('ip') ip: string) {
+    return this.snmpService.getEaps(ip);
+  }
+
+  @Get('/uptime/:ip')
+  uptimeRequest(@Param('ip') ip: string) {
+    return this.snmpService.getUptime(ip);
+  }
+
+  @Get('/test/:ip')
+  testRequest(@Param('ip') ip: string) {
+    return this.snmpService.testSnmpOID(ip);
   }
 
   @Get('/custom')

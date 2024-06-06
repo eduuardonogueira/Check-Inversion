@@ -10,7 +10,7 @@ export class SnmpService {
     private prismaService: PrismaService,
   ) {}
 
-  async getHostInformation(ip: string) {
+  async getEaps(ip: string) {
     const hostname = await this.snmpRepository.getHostname(ip);
     const neighbors = await this.snmpRepository.getNeighbor(ip);
 
@@ -27,6 +27,12 @@ export class SnmpService {
     return host;
   }
 
+  async getUptime(ip: string) {
+    // const uptime = await this
+
+    return 'Coming soon';
+  }
+
   async snmpCustom(querys: CustomRequestDto) {
     const { ip, community, oid } = querys;
     const request = await this.snmpRepository.customConsult(ip, community, oid);
@@ -34,6 +40,12 @@ export class SnmpService {
     if (!request) {
       throw new NotFoundException('Internal server error');
     }
+
+    return request;
+  }
+
+  async testSnmpOID(ip: string) {
+    const request = await this.snmpRepository.testOID(ip);
 
     return request;
   }
