@@ -12,6 +12,7 @@ export class SnmpService {
 
   async getEaps(ip: string) {
     const hostname = await this.snmpRepository.getHostname(ip);
+    console.log(hostname);
     const neighbors = await this.snmpRepository.getNeighbor(ip);
 
     if (!hostname && !neighbors) {
@@ -27,9 +28,7 @@ export class SnmpService {
     return host;
   }
 
-  async getUptime(ip: string) {
-    // const uptime = await this
-
+  async getUptime(_ip: string) {
     return 'Coming soon';
   }
 

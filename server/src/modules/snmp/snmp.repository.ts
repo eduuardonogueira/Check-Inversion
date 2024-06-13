@@ -7,10 +7,17 @@ export interface Gbic {
   id: number;
   port?: number;
   description?: string;
-  items: {
+  sensor: {
     id: number;
+    type?: number;
+    scale?: number;
+    precision?: number;
+    value?: number;
+    status?: number;
+    unitsDisplay?: string;
+    valueTimeStamp?: number;
+    valueUpdateRate?: number;
     description?: string;
-    value?: string;
   }[];
 }
 
@@ -80,39 +87,18 @@ export class SnmpRepository {
       .filter((item) => item);
   }
 
+  findByIndex(varbinds: Varbinds[], index: string) {
+    return varbinds.find((valuesOid) => valuesOid.oid.includes(index)).value;
+  }
+
   async testOID(ip: string) {
-    // const ports = await this.snmpMethods.subtree(
-    //   ip,
-    //   'v1a1pe@RNPcom91',
-    //   '1.3.6.1.2.1.2.2.1.2',
-    // );
-
-    // const portsIndex = ports
-    //   .map((item) => {
-    //     const lastInformation = item.oid.split('.').pop();
-    //     if (lastInformation.length === 4) return lastInformation;
-    //   })
-    //   .filter((item) => item);
-
-    // const portsMap = await this.snmpMethods.subtree(
-    //   ip,
-    //   'v1a1pe@RNPcom91',
-    //   '1.3.6.1.2.1.47.1.3.2.1.2',
-    // );
-
-    // const portsMap = await this.snmpMethods.subtree(
-    //   ip,
-    //   'v1a1pe@RNPcom91',
-    //   '1.3.6.1.2.1.47.1.3.2.1.2',
-    // );
     const gbicArray: Gbic[] = [];
-    const itemsIndex: Gbic['items'] = [];
+    const itemsIndex: Gbic['sensor'] = [];
 
     const indexMapping = await this.snmpMethods.subtree(
       ip,
       'v1a1pe@RNPcom91',
       '1.3.6.1.2.1.47.1.1.1.1.4',
-      true,
     );
 
     indexMapping.forEach((varbind: Varbinds, index: number) => {
@@ -127,7 +113,7 @@ export class SnmpRepository {
           gbicArray.push({
             id: portIndex,
             port: portIndex - 3,
-            items: [...itemsIndex],
+            sensor: [...itemsIndex],
           });
           itemsIndex.length = 0;
         }
@@ -143,7 +129,7 @@ export class SnmpRepository {
     const valuesMapping = await this.snmpMethods.subtree(
       ip,
       'v1a1pe@RNPcom91',
-      '1.3.6.1.2.1.99.1.1.1.4',
+      '1.3.6.1.2.1.99.1.1.1',
     );
 
     const filtered = gbicArray.map((port) => ({
@@ -152,44 +138,32 @@ export class SnmpRepository {
         (descriptionOid) =>
           descriptionOid.oid.split('.').pop() === port.id.toString(),
       ).value,
-      items: port.items.map((item) => ({
+
+      sensor: port.sensor.map((item) => ({
         ...item,
         description: descriptionMapping.find(
           (descriptionOid) =>
             descriptionOid.oid.split('.').pop() === item.id.toString(),
         ).value,
-        value: valuesMapping.find(
-          (valuesOid) => valuesOid.oid.split('.').pop() === item.id.toString(),
-        ).value,
+        type: this.findByIndex(valuesMapping, `1.${item.id}`),
+        scale: this.findByIndex(valuesMapping, `2.${item.id}`),
+        precision: this.findByIndex(valuesMapping, `3.${item.id}`),
+        value: this.findByIndex(valuesMapping, `4.${item.id}`),
+        status: this.findByIndex(valuesMapping, `5.${item.id}`),
+        unitsDisplay: this.findByIndex(valuesMapping, `6.${item.id}`),
+        valueTimeStamp: this.findByIndex(valuesMapping, `7.${item.id}`),
+        valueUpdateRate: this.findByIndex(valuesMapping, `8.${item.id}`),
       })),
     }));
 
     return filtered;
 
-    // {
-    //   id: description.value;
-    //   port: description.value - 3;
-    //   items: [
-    //     {
-    //       id: lastOidNumber,
-    //     },
-    //   ];
-    // }
-
     // 1.3.6.1.2.1.2.2.1.2 -
     // 1.3.6.1.2.1.47.1.1.1.1.4 - indice dos items
-
     // 1.3.6.1.2.1.2.2.1.2 mapeamento das portas
     // 1.3.6.1.2.1.47.1.3.2.1.2 indices das portas
     // 1.3.6.1.2.1.47.1.1.1.1 mapeamento das descrições
     // 1.3.6.1.2.1.99.1.1.1.4 mapeamento dos valores das portas
-
-    // console.log('finalizado');
-    return gbicArray;
-
-    // id - porta
-    // id - items
-
     // 1.3.6.1.2.1.47.1.1.1.1.2. + indice da porta - Velocidade do Gbic - 10 Gbps Ethernet Port
     // 1.3.6.1.2.1.47.1.1.1.1.2. + indice do items - Nome do item - SFP TX Bias Current Sensor
     // 1.3.6.1.2.1.47.1.1.1.1.6 - numero da porta
