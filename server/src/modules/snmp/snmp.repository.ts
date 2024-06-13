@@ -6,8 +6,11 @@ import { SnmpMethods } from './snmp.methods';
 export interface Gbic {
   id: number;
   port?: number;
+  description?: string;
   items: {
     id: number;
+    description?: string;
+    value?: string;
   }[];
 }
 
@@ -63,7 +66,9 @@ export class SnmpRepository {
   }
 
   filterByOid(varbinds: Varbinds[], oid: string) {
-    return varbinds.filter((varbind) => varbind.oid.startsWith(oid));
+    return varbinds
+      .filter((varbind) => varbind.oid.startsWith(oid))
+      .map((varbind) => varbind.value);
   }
 
   getLastOidNumber(varbinds: Varbinds[]) {
@@ -100,28 +105,25 @@ export class SnmpRepository {
     //   'v1a1pe@RNPcom91',
     //   '1.3.6.1.2.1.47.1.3.2.1.2',
     // );
-
-    const description = await this.snmpMethods.subtree(
-      ip,
-      'v1a1pe@RNPcom91',
-      '1.3.6.1.2.1.47.1.1.1.1.4',
-    );
-
     const gbicArray: Gbic[] = [];
     const itemsIndex: Gbic['items'] = [];
 
-    description.forEach((varbind: Varbinds, index: number) => {
+    const indexMapping = await this.snmpMethods.subtree(
+      ip,
+      'v1a1pe@RNPcom91',
+      '1.3.6.1.2.1.47.1.1.1.1.4',
+      true,
+    );
+
+    indexMapping.forEach((varbind: Varbinds, index: number) => {
       if (typeof varbind.value === 'number') {
         if (varbind.value - 3 < 1 || varbind.value.toString().length > 2)
           return;
         const portIndex = varbind.value;
-
-        console.log(portIndex);
-
         const lastOidNumber = parseInt(varbind.oid.split('.').pop());
         itemsIndex.push({ id: lastOidNumber });
 
-        if (description[index - 1].value !== description[index - 2].value) {
+        if (varbind.value !== indexMapping[index + 1].value) {
           gbicArray.push({
             id: portIndex,
             port: portIndex - 3,
@@ -132,6 +134,38 @@ export class SnmpRepository {
       }
     });
 
+    const descriptionMapping = await this.snmpMethods.subtree(
+      ip,
+      'v1a1pe@RNPcom91',
+      '1.3.6.1.2.1.47.1.1.1.1.2',
+    );
+
+    const valuesMapping = await this.snmpMethods.subtree(
+      ip,
+      'v1a1pe@RNPcom91',
+      '1.3.6.1.2.1.99.1.1.1.4',
+    );
+
+    const filtered = gbicArray.map((port) => ({
+      ...port,
+      description: descriptionMapping.find(
+        (descriptionOid) =>
+          descriptionOid.oid.split('.').pop() === port.id.toString(),
+      ).value,
+      items: port.items.map((item) => ({
+        ...item,
+        description: descriptionMapping.find(
+          (descriptionOid) =>
+            descriptionOid.oid.split('.').pop() === item.id.toString(),
+        ).value,
+        value: valuesMapping.find(
+          (valuesOid) => valuesOid.oid.split('.').pop() === item.id.toString(),
+        ).value,
+      })),
+    }));
+
+    return filtered;
+
     // {
     //   id: description.value;
     //   port: description.value - 3;
@@ -141,8 +175,6 @@ export class SnmpRepository {
     //     },
     //   ];
     // }
-
-    // const valuesId = this.getLastOidNumber(description);
 
     // 1.3.6.1.2.1.2.2.1.2 -
     // 1.3.6.1.2.1.47.1.1.1.1.4 - indice dos items

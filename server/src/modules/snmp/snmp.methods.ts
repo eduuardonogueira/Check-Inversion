@@ -7,6 +7,7 @@ export class SnmpMethods {
     ip: string,
     community: string,
     oid: string,
+    debug: boolean = false,
   ): Promise<Varbinds[]> {
     return new Promise((resolve, reject) => {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -34,13 +35,15 @@ export class SnmpMethods {
             resolve(snmp.varbindError(varbinds[i])),
               console.error(snmp.varbindError(varbinds[i]));
           else {
-            console.log(
-              varbinds[i].oid +
-                ' || ' +
-                varbinds[i].type +
-                ' || ' +
-                varbinds[i].value.toString(),
-            );
+            debug
+              ? console.log(
+                  varbinds[i].oid +
+                    ' || ' +
+                    varbinds[i].type +
+                    ' || ' +
+                    varbinds[i].value.toString(),
+                )
+              : '';
             result.push(varbinds[i]);
           }
         }
